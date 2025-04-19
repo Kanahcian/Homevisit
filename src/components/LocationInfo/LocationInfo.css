@@ -1,0 +1,131 @@
+/* LocationInfo.css - 地點基本信息樣式 */
+
+/* 地點簡介 */
+.location-brief {
+    margin: 10px 0 15px 0;
+    padding: 10px;
+    background-color: #fdfdfd;
+    border-radius: 8px;
+    border-left: 4px solid #81aade;
+  }
+  
+  .location-brief p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #555;
+  }
+  
+  .location-brief i {
+    color: #81aade;
+    margin-right: 8px;
+  }
+  
+  /* 額外地點資訊 */
+  .location-additional-info {
+    margin-top: 15px;
+  }
+  
+  .info-item {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  
+  .info-item-title {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .info-item-title i {
+    width: 20px;
+    text-align: center;
+    margin-right: 8px;
+    color: #4a8fe7;
+  }
+  
+  .info-item-content {
+    padding-left: 28px;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  /* 當地點簡介不存在時的樣式 */
+  .no-description {
+    margin: 15px 0;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    text-align: center;
+    font-style: italic;
+    color: #888;
+  }
+  
+  /* 額外地點信息卡片 */
+  .location-card {
+    margin-top: 20px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .location-card-header {
+    background-color: #f5f5f5;
+    padding: 10px 15px;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .location-card-content {
+    padding: 15px;
+  }
+  
+  /* 座標顯示 */
+  .coordinates {
+    display: flex;
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    font-family: monospace;
+    color: #555;
+    font-size: 14px;
+  }
+  
+  .coordinates span {
+    margin-right: 10px;
+  }
+  
+  /* 地點標籤 */
+  .location-tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  
+  .location-tag {
+    display: inline-block;
+    background-color: #e9f2fd;
+    color: #4a8fe7;
+    border-radius: 15px;
+    padding: 4px 10px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  
+  /* 響應式調整 */
+  @media screen and (max-width: 768px) {
+    .info-item {
+      padding: 10px;
+    }
+    
+    .info-item-content {
+      padding-left: 20px;
+    }
+  }

@@ -1,0 +1,25 @@
+{
+    "short_name": "家訪地圖",
+    "name": "加拿家家訪地圖",
+    "icons": [
+      {
+        "src": "assets/images/logo.png",
+        "sizes": "64x64 32x32 24x24 16x16",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/images/logo.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "assets/images/logo.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#4a8fe7",
+    "background_color": "#ffffff"
+  }
