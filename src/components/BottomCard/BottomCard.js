@@ -125,25 +125,7 @@ const BottomCard = ({
       <div className="card-content">
         <h2 id="mobile-location-name">{location ? location.name : '地點名稱'}</h2>
 
-        {/* 家訪紀錄按鈕 - 完全移除加載狀態下的任何圖標和額外樣式 */}
-        {records && records.length > 0 && (
-          <button 
-            id="mobile-show-records-btn" 
-            className={`records-toggle-btn ${isLoading ? 'loading' : ''}`}
-            onClick={toggleRecordsView}
-            disabled={isLoading}
-          >
-            {isLoading ? 
-              "獲取家訪紀錄中..." : 
-              (showRecords ? 
-                <><i className="fas fa-map-marker-alt"></i> 返回地點資訊</> : 
-                <><i className="fas fa-clipboard-list"></i> 顯示家訪紀錄</>
-              )
-            }
-          </button>
-        )}
-        
-        {/* 紀錄加載指示器 */}
+        {/* 紀錄加載指示器 - 在加載狀態下顯示 */}
         {isLoading && (
           <div id="mobile-records-loading-indicator" className="records-loading">
             <div className="section-center">
@@ -170,11 +152,26 @@ const BottomCard = ({
                 </div>
               </div>
             </div>
+            {/* <div className="loading-text">加載家訪紀錄中...</div> */}
           </div>
         )}
+
+        {/* 家訪紀錄按鈕 - 只在非加載狀態下顯示 */}
+        {records && records.length > 0 && !isLoading && (
+          <button 
+            id="mobile-show-records-btn" 
+            className="records-toggle-btn"
+            onClick={toggleRecordsView}
+          >
+            {showRecords ? 
+              <><i className="fas fa-map-marker-alt"></i> 返回地點資訊</> : 
+              <><i className="fas fa-clipboard-list"></i> 顯示家訪紀錄</>
+            }
+          </button>
+        )}
         
-        {/* 地點基本信息區塊 - 隱藏座標 */}
-        {!showRecords && (
+        {/* 地點基本信息區塊 - 只有在非加載狀態時才顯示 */}
+        {!showRecords && !isLoading && (
           <div id="mobile-location-info">
             <LocationInfo location={location} hideCoordinates={true} />
           </div>
