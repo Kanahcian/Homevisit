@@ -1,5 +1,6 @@
 import React from 'react';
 import './SidePanel.css';
+import '../LoadingAnimation.css'; 
 import LocationInfo from '../LocationInfo/LocationInfo';
 import RecordDetails from '../RecordDetails/RecordDetails';
 
@@ -24,7 +25,8 @@ const SidePanel = ({
 
   return (
     <div className={`sidebar ${isActive ? 'active' : ''}`} id="sidebar">
-      <div className="sidebar-close" onClick={onClose}>&times;</div>
+      {/* 添加有效的關閉處理函數 */}
+      <div className="sidebar-close" onClick={onClose || (() => window.history.back())}>&times;</div>
       <div className="location-details">
         <h2 id="location-name">{location ? location.name : '地點名稱'}</h2>
 
@@ -51,14 +53,37 @@ const SidePanel = ({
         {/* 紀錄加載指示器 */}
         {isLoading && (
           <div id="records-loading-indicator" className="records-loading">
-            <i className="fas fa-spinner"></i>
-            <span className="records-loading-text">正在獲取家訪紀錄...</span>
+            {/* 用新的動畫替換原來的加載指示器 */}
+            <div className="section-center">
+              <div className="section-path">
+                <div className="globe">
+                  <div className="wrapper">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
         
-        {/* 地點基本信息區塊 */}
+        {/* 地點基本信息區塊 - 隱藏座標信息 */}
         {!showRecords && (
-          <LocationInfo location={location} />
+          <LocationInfo location={location} hideCoordinates={true} />
         )}
         
         {/* 家訪紀錄區塊 */}
@@ -89,7 +114,7 @@ const SidePanel = ({
             
             {/* 家訪紀錄詳情 */}
             {currentRecord && (
-              <RecordDetails record={currentRecord} />
+              <RecordDetails record={currentRecord} compactLayout={true} />
             )}
           </div>
         )}

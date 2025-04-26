@@ -2,228 +2,229 @@
 
 /* 整合的資訊區塊 */
 .visit-info-integrated {
-    margin-bottom: 20px;
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.record-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.record-title h3 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.record-date {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 垂直布局的資訊區塊 - 更緊湊的間距 */
+.info-section {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.info-item-title {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.info-item-title i {
+  width: 20px;
+  text-align: center;
+  margin-right: 8px;
+  color: #4a8fe7;
+}
+
+.info-item.semester .info-item-title i {
+  color: #e74c3c;
+}
+
+.info-item.students .info-item-title i {
+  color: #1c8173;
+}
+
+.info-item.villagers .info-item-title i {
+  color: #33801d;
+}
+
+.info-item-content {
+  padding-left: 28px;
+}
+
+/* 參與者標籤 - 更緊湊的樣式 */
+.participant-tag {
+  display: inline-block;
+  background-color: #f0f5ff;
+  border: 1px solid #d0e0ff;
+  border-radius: 12px;
+  padding: 2px 8px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.participant-tag.student {
+  background-color: #e8f4fa;
+  border-color: #cce5ff;
+  color: #0066cc;
+}
+
+.participant-tag.villager {
+  background-color: #f0f8eb;
+  border-color: #d6f5c6;
+  color: #33801d;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  padding-right: 18px;
+}
+
+/* 添加小圖示提示可點擊 */
+.participant-tag.villager:after {
+  content: '\f06e';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  opacity: 0.6;
+  color: #33801d;
+}
+
+.participant-tag.villager:hover {
+  background-color: #e8f4e5;
+  border-color: #33801d;
+}
+
+.participant-tag.villager:hover:after {
+  opacity: 1;
+}
+
+.empty-info {
+  color: #999;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.participant-hint {
+  display: block;
+  margin-top: 6px;
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+  animation: fadeIn 0.5s ease;
+}
+
+.participant-hint i {
+  color: #33801d;
+  margin-right: 4px;
+}
+
+/* 照片容器 */
+.photo-container {
+  margin: 15px 0;
+  text-align: center;
+}
+
+.photo-container img {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.3s ease;
+}
+
+.photo-container img:hover {
+  transform: scale(1.02);
+}
+
+.photo-container p {
+  color: #999;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* 訪視筆記 */
+.visit-notes {
+  margin-top: 15px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #4a8fe7;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  line-height: 1.6;
+}
+
+.visit-notes h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.visit-notes h3 i {
+  margin-right: 8px;
+  color: #4a8fe7;
+}
+
+.visit-notes p {
+  margin: 0;
+  color: #555;
+  font-size: 14px;
+}
+
+/* 錯誤狀態 */
+.photo-error {
+  color: #e74c3c;
+  background-color: #fdf0f0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
-  
-  .record-title {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+  to {
+    opacity: 1;
   }
-  
-  .record-title h3 {
-    margin: 0;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .record-date {
-    color: #666;
-    font-size: 14px;
-  }
-  
-  /* 垂直布局的資訊區塊 */
-  .info-section {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-  }
-  
-  .info-item {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 15px;
-  }
-  
-  .info-item-title {
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
-  .info-item-title i {
-    width: 20px;
-    text-align: center;
-    margin-right: 8px;
-    color: #4a8fe7;
-  }
-  
-  .info-item.semester .info-item-title i {
-    color: #e74c3c;
-  }
-  
-  .info-item.students .info-item-title i {
-    color: #1c8173;
-  }
-  
-  .info-item.villagers .info-item-title i {
-    color: #33801d;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+  .visit-info-integrated {
+    padding: 12px;
   }
   
   .info-item-content {
-    padding-left: 28px;
+    padding-left: 20px;
   }
   
-  /* 參與者標籤 */
-  .participant-tag {
-    display: inline-block;
-    background-color: #f0f5ff;
-    border: 1px solid #d0e0ff;
-    border-radius: 12px;
-    padding: 2px 8px;
-    margin-right: 4px;
-    margin-bottom: 6px;
-    font-size: 12px;
-    white-space: nowrap;
+  .participant-tag.villager:active {
+    background-color: #e0f0d8;
   }
-  
-  .participant-tag.student {
-    background-color: #e8f4fa;
-    border-color: #cce5ff;
-    color: #0066cc;
-  }
-  
-  .participant-tag.villager {
-    background-color: #f0f8eb;
-    border-color: #d6f5c6;
-    color: #33801d;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.2s ease;
-    padding-right: 18px;
-  }
-  
-  /* 添加小圖示提示可點擊 */
-  .participant-tag.villager:after {
-    content: '\f06e';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 10px;
-    opacity: 0.6;
-    color: #33801d;
-  }
-  
-  .participant-tag.villager:hover {
-    background-color: #e8f4e5;
-    border-color: #33801d;
-  }
-  
-  .participant-tag.villager:hover:after {
-    opacity: 1;
-  }
-  
-  .empty-info {
-    color: #999;
-    font-style: italic;
-    font-size: 12px;
-  }
-  
-  .participant-hint {
-    display: block;
-    margin-top: 8px;
-    color: #666;
-    font-size: 12px;
-    font-style: italic;
-    animation: fadeIn 0.5s ease;
-  }
-  
-  .participant-hint i {
-    color: #33801d;
-    margin-right: 4px;
-  }
-  
-  /* 照片容器 */
-  .photo-container {
-    margin: 15px 0;
-    text-align: center;
-  }
-  
-  .photo-container img {
-    max-width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease;
-  }
-  
-  .photo-container img:hover {
-    transform: scale(1.02);
-  }
-  
-  .photo-container p {
-    color: #999;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-  }
-  
-  /* 訪視筆記 */
-  .visit-notes {
-    margin-top: 20px;
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    border-left: 4px solid #4a8fe7;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    line-height: 1.6;
-  }
-  
-  .visit-notes h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 16px;
-    color: #333;
-    display: flex;
-    align-items: center;
-  }
-  
-  .visit-notes h3 i {
-    margin-right: 8px;
-    color: #4a8fe7;
-  }
-  
-  .visit-notes p {
-    margin: 0;
-    color: #555;
-  }
-  
-  /* 錯誤狀態 */
-  .photo-error {
-    color: #e74c3c;
-    background-color: #fdf0f0;
-  }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  /* 響應式調整 */
-  @media (max-width: 768px) {
-    .visit-info-integrated {
-      padding: 12px;
-    }
-    
-    .info-item-content {
-      padding-left: 20px;
-    }
-    
-    .participant-tag.villager:active {
-      background-color: #e0f0d8;
-    }
-  }
+}

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './BottomCard.css';
+import '../LoadingAnimation.css';
 import LocationInfo from '../LocationInfo/LocationInfo';
 import RecordDetails from '../RecordDetails/RecordDetails';
 
@@ -11,7 +12,8 @@ const BottomCard = ({
   toggleRecordsView, 
   currentRecordIndex, 
   navigateRecords,
-  isActive
+  isActive,
+  onClose  // 新增這個屬性
 }) => {
   // 取得當前記錄
   const currentRecord = records && records.length > 0 ? records[currentRecordIndex] : null;
@@ -73,11 +75,7 @@ const BottomCard = ({
     };
     
     const animateContent = (direction) => {
-      const contentElements = [
-        document.getElementById('mobile-location-photos'),
-        document.querySelector('#mobile-integrated-info'),
-        document.getElementById('mobile-visit-notes')
-      ];
+      const contentElements = document.querySelectorAll('.mobile-record-section > div');
       
       const translateValue = direction === 'left' ? '-15px' : '15px';
       
@@ -116,7 +114,14 @@ const BottomCard = ({
   return (
     <div className={`bottom-card ${isActive ? 'active' : ''}`} id="bottom-card">
       <div className="drag-handle"></div>
-      <div className="bottom-card-close" onClick={() => window.history.back()}>&times;</div>
+      <div className="bottom-card-close" onClick={() => {
+        // 使用外部傳入的 onClose 函數，如果沒有則嘗試回退歷史
+        if (typeof onClose === 'function') {
+          onClose();
+        } else {
+          window.history.back();
+        }
+      }}>&times;</div>
       
       <div className="card-content">
         <h2 id="mobile-location-name">{location ? location.name : '地點名稱'}</h2>
@@ -144,15 +149,37 @@ const BottomCard = ({
         {/* 紀錄加載指示器 */}
         {isLoading && (
           <div id="mobile-records-loading-indicator" className="records-loading">
-            <i className="fas fa-spinner"></i>
-            <span className="records-loading-text">正在獲取家訪紀錄...</span>
+            <div className="section-center">
+              <div className="section-path">
+                <div className="globe">
+                  <div className="wrapper">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
         
-        {/* 地點基本信息區塊 */}
+        {/* 地點基本信息區塊 - 隱藏座標 */}
         {!showRecords && (
           <div id="mobile-location-info">
-            <LocationInfo location={location} />
+            <LocationInfo location={location} hideCoordinates={true} />
           </div>
         )}
         
@@ -195,36 +222,10 @@ const BottomCard = ({
             {/* 滑動提示 */}
             <div className="swipe-hint">← 左右滑動切換紀錄 →</div>
             
-            {/* 家訪紀錄詳情 */}
-            {currentRecord && (
-              <div id="mobile-details-wrapper">
-                {/* 使用和桌面版相同的RecordDetails組件，但為其添加特定id以便於滑動動畫 */}
-                <div id="mobile-location-photos" className="photo-container">
-                  {currentRecord.photo ? (
-                    <img 
-                      src={currentRecord.photo} 
-                      alt="訪視照片" 
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = '/assets/images/photo-error.png';
-                      }}
-                    />
-                  ) : (
-                    <p>暫無照片</p>
-                  )}
-                </div>
-                
-                <div id="mobile-integrated-info" className="visit-info-integrated">
-                  {/* 這裡重複RecordDetails中的整合資訊區塊，但具有不同id */}
-                  <RecordDetails record={currentRecord} />
-                </div>
-                
-                <div id="mobile-visit-notes" className="visit-notes">
-                  <h3><i className="fas fa-clipboard"></i> 訪視筆記</h3>
-                  <p>{currentRecord.description || "無訪視筆記"}</p>
-                </div>
-              </div>
-            )}
+            {/* 家訪紀錄詳情 - 使用緊湊布局 */}
+            <div className="mobile-record-section">
+              {currentRecord && <RecordDetails record={currentRecord} compactLayout={true} />}
+            </div>
           </div>
         )}
       </div>

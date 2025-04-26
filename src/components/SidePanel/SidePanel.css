@@ -2,9 +2,9 @@
 
 .sidebar {
     position: absolute;
-    left: -400px;
+    left: -550px;
     top: 0;
-    width: 350px;
+    width: 500px;
     height: 100%;
     background: white;
     z-index: 1000;

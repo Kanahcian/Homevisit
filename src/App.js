@@ -86,6 +86,11 @@ function App() {
     }
   };
 
+  // 關閉側邊欄
+  const handleCloseSidePanel = () => {
+    setSelectedLocation(null);
+  };
+
   return (
     <div className="app-container">
       {/* 搜索欄 */}
@@ -112,6 +117,7 @@ function App() {
           currentRecordIndex={currentRecordIndex}
           navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
+          onClose={handleCloseSidePanel}
         />
       ) : (
         <BottomCard 
@@ -123,6 +129,7 @@ function App() {
           currentRecordIndex={currentRecordIndex}
           navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
+          onClose={handleCloseSidePanel}  // 添加這行
         />
       )}
     </div>

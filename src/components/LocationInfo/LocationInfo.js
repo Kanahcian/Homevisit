@@ -1,7 +1,7 @@
 import React from 'react';
 import './LocationInfo.css';
 
-const LocationInfo = ({ location }) => {
+const LocationInfo = ({ location, hideCoordinates }) => {
   if (!location) return null;
 
   return (
@@ -16,18 +16,20 @@ const LocationInfo = ({ location }) => {
         </div>
       )}
       
-      {/* 這裡可以添加更多地點相關資訊 */}
-      <div className="location-additional-info">
-        <div className="info-item">
-          <div className="info-item-title">
-            <i className="fas fa-map-marker-alt"></i>
-            <span>位置座標</span>
-          </div>
-          <div className="info-item-content">
-            {location.latitude}, {location.longitude}
+      {/* 這裡可以添加更多地點相關資訊，但隱藏座標 */}
+      {!hideCoordinates && (
+        <div className="location-additional-info">
+          <div className="info-item">
+            <div className="info-item-title">
+              <i className="fas fa-map-marker-alt"></i>
+              <span>位置座標</span>
+            </div>
+            <div className="info-item-content">
+              {location.latitude}, {location.longitude}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
