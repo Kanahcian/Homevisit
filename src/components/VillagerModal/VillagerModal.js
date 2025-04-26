@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './VillagerModal.css';
 import { fetchVillagerDetails } from '../../services/api';
-import { convertGoogleDriveLink } from '../../utils/helpers';
 
 const VillagerModal = ({ isOpen, onClose, villagerId, villagerName }) => {
   const [villagerInfo, setVillagerInfo] = useState(null);
@@ -20,28 +19,15 @@ const VillagerModal = ({ isOpen, onClose, villagerId, villagerName }) => {
     setError(null);
     
     try {
-      const villagerData = await fetchVillagerDetails(villagerId);
-      
-      // 檢查返回的名稱是否與傳入的名稱匹配
-      if (villagerData && villagerName && villagerData.name !== villagerName) {
-        console.warn(`API 返回的村民 (${villagerData.name}) 與點擊的村民 (${villagerName}) 不符`);
-        // 可以在這裡實現更復雜的錯誤處理或糾正邏輯
-      }
-      
-      setVillagerInfo(villagerData);
+      console.log(`正在載入村民資訊，ID: ${villagerId}`);
+      const data = await fetchVillagerDetails(villagerId);
+      setVillagerInfo(data);
     } catch (error) {
-      console.error("加載村民資訊失敗:", error);
-      setError(`發生錯誤: ${error.message}`);
+      console.error("載入村民資訊失敗:", error);
+      setError(`無法載入資料: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // 格式化性別顯示
-  const formatGender = (gender) => {
-    if (gender === "M") return "男";
-    if (gender === "F") return "女";
-    return gender;
   };
 
   // 如果彈窗未開啟，不渲染任何內容
@@ -51,19 +37,19 @@ const VillagerModal = ({ isOpen, onClose, villagerId, villagerName }) => {
     <div className="villager-modal-overlay active">
       <div className="villager-modal">
         <div className="villager-modal-header">
-          <h3>{isLoading ? "加載中..." : (villagerInfo ? villagerInfo.name : villagerName || "村民資訊")}</h3>
+          <h3>{isLoading ? "載入中..." : (villagerInfo ? villagerInfo.name : villagerName || "村民資訊")}</h3>
           <span className="villager-modal-close" onClick={onClose}>&times;</span>
         </div>
         
         <div className="villager-modal-content">
           {isLoading ? (
             <div className="villager-photo-container">
-              <p>資料加載中...</p>
+              <p>資料載入中...</p>
             </div>
           ) : error ? (
             <div className="villager-error">
               <p>{error}</p>
-              <p>無法載入 "{villagerName}" 的資料</p>
+              <p>無法載入村民資料 (ID: {villagerId})</p>
             </div>
           ) : villagerInfo ? (
             <>
@@ -85,7 +71,7 @@ const VillagerModal = ({ isOpen, onClose, villagerId, villagerName }) => {
               <div className="villager-info">
                 <div className="info-row">
                   <span className="info-label">性別:</span>
-                  <span className="info-value">{formatGender(villagerInfo.gender)}</span>
+                  <span className="info-value">{villagerInfo.gender}</span>
                 </div>
                 
                 <div className="info-row">

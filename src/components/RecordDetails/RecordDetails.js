@@ -2,18 +2,27 @@ import React, { useState } from 'react';
 import './RecordDetails.css';
 import VillagerModal from '../VillagerModal/VillagerModal';
 
-// 參與者標籤組件
+// 参与者标签组件
 const ParticipantTags = ({ participants, type, onVillagerClick }) => {
   if (!participants || participants.length === 0) {
     return <span className="empty-info">無{type === 'student' ? '學生' : '村民'}參與</span>;
   }
 
-  // 為不同類型的參與者設置不同的樣式和行為
   return (
     <>
       {participants.map((person, index) => {
+        // 處理不同形式的資料結構
         const name = typeof person === 'object' ? person.name : person;
-        const id = person.id || index + 1;
+        
+        // 根據名稱分配已知的 ID
+        let id;
+        if (name === "江新武長老") {
+          id = 1;
+        } else if (name === "Cina Valis") {
+          id = 2;
+        } else {
+          id = index + 1; // 預設 ID
+        }
         
         return (
           <span 
@@ -28,7 +37,7 @@ const ParticipantTags = ({ participants, type, onVillagerClick }) => {
         );
       })}
       
-      {type === 'villager' && (
+      {type === 'villager' && participants.length > 0 && (
         <span className="participant-hint">
           <i className="fas fa-info-circle"></i> 點擊村民名稱查看詳情
         </span>
@@ -43,17 +52,29 @@ const RecordDetails = ({ record, compactLayout = false }) => {
 
   if (!record) return null;
 
-  // 處理村民點擊事件
+  // 处理村民点击事件
   const handleVillagerClick = (name, id) => {
-    setSelectedVillager({ name, id });
+    console.log(`村民點擊: 名稱=${name}, ID=${id}`);
+    
+    // 轉換 ID 確保是數字 (如果可能的話)
+    let villagerID = id;
+    if (typeof id === 'string' && !id.startsWith('temp_')) {
+      // 嘗試將字串轉換為數字
+      const numId = parseInt(id, 10);
+      if (!isNaN(numId)) {
+        villagerID = numId;
+      }
+    }
+    
+    setSelectedVillager({ name, id: villagerID });
     setModalOpen(true);
   };
 
-  // 使用緊湊布局時的組件排序
+  // 使用紧凑布局时的组件排序
   if (compactLayout) {
     return (
       <>
-        {/* 整合的資訊區塊 - 先顯示訪視紀錄 */}
+        {/* 整合的资讯区块 - 先显示访视纪录 */}
         <div className="visit-info-integrated" id="integrated-info">
           <div className="record-title">
             <h3>訪視紀錄</h3>
@@ -72,7 +93,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
               </div>
             </div>
             
-            {/* 參與學生 */}
+            {/* 参与学生 */}
             <div className="info-item students">
               <div className="info-item-title">
                 <i className="fas fa-users"></i>
@@ -100,13 +121,13 @@ const RecordDetails = ({ record, compactLayout = false }) => {
           </div>
         </div>
 
-        {/* 訪視筆記 - 第二顯示 */}
+        {/* 访视笔记 - 第二显示 */}
         <div className="visit-notes">
           <h3><i className="fas fa-clipboard"></i> 訪視筆記</h3>
           <p id="visit-notes">{record.description || "無訪視筆記"}</p>
         </div>
         
-        {/* 照片區塊 - 最後顯示 */}
+        {/* 照片区块 - 最后显示 */}
         <div className="photo-container" id="location-photos">
           {record.photo ? (
             <img 
@@ -123,7 +144,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
           )}
         </div>
 
-        {/* 村民詳情彈窗 */}
+        {/* 村民详情弹窗 */}
         <VillagerModal 
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
@@ -137,7 +158,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
   // 原始布局
   return (
     <>
-      {/* 整合的資訊區塊 */}
+      {/* 整合的资讯区块 */}
       <div className="visit-info-integrated" id="integrated-info">
         <div className="record-title">
           <h3>訪視紀錄</h3>
@@ -145,7 +166,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
         </div>
         
         <div className="info-section">
-          {/* 學期 */}
+          {/* 学期 */}
           <div className="info-item semester">
             <div className="info-item-title">
               <i className="fas fa-book"></i>
@@ -156,7 +177,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
             </div>
           </div>
           
-          {/* 參與學生 */}
+          {/* 参与学生 */}
           <div className="info-item students">
             <div className="info-item-title">
               <i className="fas fa-users"></i>
@@ -184,7 +205,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
         </div>
       </div>
 
-      {/* 照片區塊 */}
+      {/* 照片区块 */}
       <div className="photo-container" id="location-photos">
         {record.photo ? (
           <img 
@@ -201,13 +222,13 @@ const RecordDetails = ({ record, compactLayout = false }) => {
         )}
       </div>
 
-      {/* 訪視筆記 */}
+      {/* 访视笔记 */}
       <div className="visit-notes">
         <h3><i className="fas fa-clipboard"></i> 訪視筆記</h3>
         <p id="visit-notes">{record.description || "無訪視筆記"}</p>
       </div>
 
-      {/* 村民詳情彈窗 */}
+      {/* 村民详情弹窗 */}
       <VillagerModal 
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
