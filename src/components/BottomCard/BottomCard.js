@@ -13,7 +13,7 @@ const BottomCard = ({
   currentRecordIndex, 
   navigateRecords,
   isActive,
-  onClose  // 新增這個屬性
+  onClose
 }) => {
   // 取得當前記錄
   const currentRecord = records && records.length > 0 ? records[currentRecordIndex] : null;
@@ -115,7 +115,6 @@ const BottomCard = ({
     <div className={`bottom-card ${isActive ? 'active' : ''}`} id="bottom-card">
       <div className="drag-handle"></div>
       <div className="bottom-card-close" onClick={() => {
-        // 使用外部傳入的 onClose 函數，如果沒有則嘗試回退歷史
         if (typeof onClose === 'function') {
           onClose();
         } else {
@@ -126,7 +125,7 @@ const BottomCard = ({
       <div className="card-content">
         <h2 id="mobile-location-name">{location ? location.name : '地點名稱'}</h2>
 
-        {/* 家訪紀錄按鈕 */}
+        {/* 家訪紀錄按鈕 - 完全移除加載狀態下的任何圖標和額外樣式 */}
         {records && records.length > 0 && (
           <button 
             id="mobile-show-records-btn" 
@@ -134,15 +133,13 @@ const BottomCard = ({
             onClick={toggleRecordsView}
             disabled={isLoading}
           >
-            {isLoading ? (
-              <><i className="fas fa-spinner"></i> 獲取家訪紀錄中...</>
-            ) : (
-              showRecords ? (
-                <><i className="fas fa-map-marker-alt"></i> 返回地點資訊</>
-              ) : (
+            {isLoading ? 
+              "獲取家訪紀錄中..." : 
+              (showRecords ? 
+                <><i className="fas fa-map-marker-alt"></i> 返回地點資訊</> : 
                 <><i className="fas fa-clipboard-list"></i> 顯示家訪紀錄</>
               )
-            )}
+            }
           </button>
         )}
         

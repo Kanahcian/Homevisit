@@ -30,7 +30,7 @@ const SidePanel = ({
       <div className="location-details">
         <h2 id="location-name">{location ? location.name : '地點名稱'}</h2>
 
-        {/* 家訪紀錄按鈕 */}
+        {/* 家訪紀錄按鈕 - 完全移除加載狀態下的任何圖標和額外樣式 */}
         {records && records.length > 0 && (
           <button 
             id="show-records-btn" 
@@ -38,22 +38,20 @@ const SidePanel = ({
             onClick={toggleRecordsView}
             disabled={isLoading}
           >
-            {isLoading ? (
-              <><i className="fas fa-spinner"></i> 獲取家訪紀錄中...</>
-            ) : (
-              showRecords ? (
-                <><i className="fas fa-map-marker-alt"></i> 返回地點資訊</>
-              ) : (
+            {isLoading ? 
+              "獲取家訪紀錄中..." : 
+              (showRecords ? 
+                <><i className="fas fa-map-marker-alt"></i> 返回地點資訊</> : 
                 <><i className="fas fa-clipboard-list"></i> 顯示家訪紀錄</>
               )
-            )}
+            }
           </button>
         )}
         
         {/* 紀錄加載指示器 */}
         {isLoading && (
           <div id="records-loading-indicator" className="records-loading">
-            {/* 用新的動畫替換原來的加載指示器 */}
+            {/* 使用新的加載動畫 */}
             <div className="section-center">
               <div className="section-path">
                 <div className="globe">
