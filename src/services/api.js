@@ -150,7 +150,7 @@ export const fetchRecords = async (locationId) => {
           recordId: record.recordid,
           semester: record.semester,
           date: formatDate(record.date),
-          description: record.description || "无访视笔记",
+          description: record.description || "無訪視筆記",
           photo: convertGoogleDriveLink(record.photo),
           account: record.account,
           students: record.students || [],
