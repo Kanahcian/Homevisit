@@ -15,7 +15,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [showRecords, setShowRecords] = useState(false);
-  const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [isFullScreenContent, setIsFullScreenContent] = useState(false);
   const [activeMenuSection, setActiveMenuSection] = useState('home');
 
@@ -50,7 +49,6 @@ function App() {
     
     setSelectedLocation(location);
     setShowRecords(false); // 重置為顯示基本資訊
-    setCurrentRecordIndex(0); // 重置為第一條記錄
     
     if (location) {
       setIsLoading(true);
@@ -84,15 +82,6 @@ function App() {
   // 切換顯示記錄/基本資訊
   const toggleRecordsView = () => {
     setShowRecords(!showRecords);
-  };
-
-  // 導航記錄
-  const navigateRecords = (direction) => {
-    if (direction === 'prev' && currentRecordIndex > 0) {
-      setCurrentRecordIndex(currentRecordIndex - 1);
-    } else if (direction === 'next' && currentRecordIndex < locationRecords.length - 1) {
-      setCurrentRecordIndex(currentRecordIndex + 1);
-    }
   };
 
   // 關閉側邊欄
@@ -149,8 +138,6 @@ function App() {
           isLoading={isLoading}
           showRecords={showRecords}
           toggleRecordsView={toggleRecordsView}
-          currentRecordIndex={currentRecordIndex}
-          navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
           onClose={handleCloseSidePanel}
         />
@@ -163,8 +150,6 @@ function App() {
           isLoading={isLoading}
           showRecords={showRecords}
           toggleRecordsView={toggleRecordsView}
-          currentRecordIndex={currentRecordIndex}
-          navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
           onClose={handleCloseSidePanel}
         />

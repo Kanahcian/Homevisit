@@ -74,6 +74,99 @@
   animation: fadeIn 0.3s ease;
 }
 
+/* 記錄統計摘要 */
+.records-summary {
+  background-color: #f8f9fa;
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+}
+
+/* 按年份分組的記錄容器 */
+.records-by-year {
+  /* 不需要特殊樣式，使用預設 */
+}
+
+/* 年份分組 */
+.year-group {
+  margin-bottom: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+/* 年份標題欄 */
+.year-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.year-header:hover {
+  background-color: #ececec;
+}
+
+.year-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.year-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+.year-count {
+  font-size: 13px;
+  color: #666;
+  background-color: #e9f2fd;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* 年份展開/收起按鈕 */
+.year-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4a8fe7;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.year-toggle-btn:hover {
+  background-color: rgba(74, 143, 231, 0.1);
+  color: #3972c0;
+}
+
+/* 該年份的記錄列表 */
+.year-records {
+  /* 不需要特殊樣式，使用自然流布局 */
+}
+
+/* 單筆記錄項目 */
+.record-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 8px 0; /* 減少 padding */
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
 /* 簡化按鈕的加載狀態 - 徹底移除所有動畫效果 */
 .records-toggle-btn.loading {
   background-color: #e0e0e0 !important;
@@ -112,9 +205,43 @@
   }
 }
 
+/* 年份記錄展開動畫 */
+.year-records {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 2000px;
+  }
+}
+
 /* 媒體查詢，確保在小屏幕上隱藏 */
 @media screen and (max-width: 1024px) {
   .sidebar {
     display: none;
   }
+}
+
+/* 滾動條美化 */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0,0,0,0.3);
 }

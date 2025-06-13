@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import './SidePanel.css';
 import '../LoadingAnimation.css'; 
 import LocationInfo from '../LocationInfo/LocationInfo';
@@ -9,14 +9,84 @@ const SidePanel = ({
   records, 
   isLoading, 
   showRecords, 
-  toggleRecordsView, 
-  currentRecordIndex, 
-  navigateRecords,
+  toggleRecordsView,
   isActive,
   onClose
 }) => {
-  // 取得當前記錄
-  const currentRecord = records && records.length > 0 ? records[currentRecordIndex] : null;
+  // 管理每個年份的展開/收起狀態
+  const [expandedYears, setExpandedYears] = useState(new Set());
+  
+  // 按年份分組記錄
+  const recordsByYear = useMemo(() => {
+    if (!records || records.length === 0) return {};
+    
+    const grouped = {};
+    records.forEach(record => {
+      // 從原始日期中提取年份
+      let year = '未知年份';
+      
+      // 優先使用 rawDate，如果沒有則使用 date
+      const dateToUse = record.rawDate || record.date;
+      
+      if (dateToUse) {
+        // 嘗試不同的日期解析方法
+        
+        // 方法1: 如果是 YYYYMMDD 格式
+        if (/^\d{8}$/.test(dateToUse)) {
+          year = dateToUse.substring(0, 4);
+        }
+        // 方法2: 如果包含 - 分隔符 (YYYY-MM-DD)
+        else if (dateToUse.includes('-')) {
+          const parts = dateToUse.split('-');
+          if (parts[0] && /^\d{4}$/.test(parts[0])) {
+            year = parts[0];
+          }
+        }
+        // 方法3: 如果是中文格式，嘗試提取年份
+        else {
+          const yearMatch = dateToUse.match(/(\d{4})/);
+          if (yearMatch) {
+            year = yearMatch[1];
+          }
+        }
+      }
+      
+      if (!grouped[year]) {
+        grouped[year] = [];
+      }
+      grouped[year].push(record);
+    });
+    
+    // 按年份排序（最新的在前）
+    const sortedYears = Object.keys(grouped).sort((a, b) => {
+      if (a === '未知年份') return 1;
+      if (b === '未知年份') return -1;
+      return parseInt(b) - parseInt(a);
+    });
+    
+    const sortedGrouped = {};
+    sortedYears.forEach(year => {
+      // 每年內的記錄也按日期排序（最新的在前）
+      sortedGrouped[year] = grouped[year].sort((a, b) => {
+        const dateA = a.rawDate || a.date || '';
+        const dateB = b.rawDate || b.date || '';
+        return dateB.localeCompare(dateA);
+      });
+    });
+    
+    return sortedGrouped;
+  }, [records]);
+  
+  // 切換年份展開/收起狀態
+  const toggleYear = (year) => {
+    const newExpandedYears = new Set(expandedYears);
+    if (newExpandedYears.has(year)) {
+      newExpandedYears.delete(year);
+    } else {
+      newExpandedYears.add(year);
+    }
+    setExpandedYears(newExpandedYears);
+  };
   
   // 如果側邊欄未激活，則不顯示
   if (!isActive) {
@@ -25,7 +95,6 @@ const SidePanel = ({
 
   return (
     <div className={`sidebar ${isActive ? 'active' : ''}`} id="sidebar">
-      {/* 添加有效的關閉處理函數 */}
       <div className="sidebar-close" onClick={onClose || (() => window.history.back())}>&times;</div>
       <div className="location-details">
         <h2 id="location-name">{location ? location.name : '地點名稱'}</h2>
@@ -56,36 +125,47 @@ const SidePanel = ({
           <LocationInfo location={location} hideCoordinates={true} />
         )}
         
-        {/* 家訪紀錄區塊 */}
+        {/* 家訪紀錄區塊 - 改版後的年份分組顯示 */}
         {showRecords && records && records.length > 0 && (
           <div id="records-section" className="records-section">
-            {/* 紀錄切換導覽列 */}
-            <div className="records-nav">
-              <button 
-                id="prev-record" 
-                className="nav-btn"
-                onClick={() => navigateRecords('prev')}
-                disabled={currentRecordIndex === 0}
-              >
-                &lt;
-              </button>
-              <span id="record-indicator">
-                紀錄 {currentRecordIndex + 1}/{records.length}
-              </span>
-              <button 
-                id="next-record" 
-                className="nav-btn"
-                onClick={() => navigateRecords('next')}
-                disabled={currentRecordIndex === records.length - 1}
-              >
-                &gt;
-              </button>
+            <div className="records-summary">
+              <span>共 {records.length} 筆記錄</span>
             </div>
             
-            {/* 家訪紀錄詳情 */}
-            {currentRecord && (
-              <RecordDetails record={currentRecord} compactLayout={true} />
-            )}
+            {/* 按年份分組的記錄 */}
+            <div className="records-by-year">
+              {Object.entries(recordsByYear).map(([year, yearRecords]) => (
+                <div key={year} className="year-group">
+                  {/* 年份標題和展開/收起按鈕 */}
+                  <div 
+                    className="year-header"
+                    onClick={() => toggleYear(year)}
+                  >
+                    <div className="year-info">
+                      <span className="year-title">{year}</span>
+                      <span className="year-count">({yearRecords.length}筆)</span>
+                    </div>
+                    <button className="year-toggle-btn">
+                      {expandedYears.has(year) ? 
+                        <i className="fas fa-minus"></i> : 
+                        <i className="fas fa-plus"></i>
+                      }
+                    </button>
+                  </div>
+                  
+                  {/* 該年份的記錄列表 */}
+                  {expandedYears.has(year) && (
+                    <div className="year-records">
+                      {yearRecords.map((record, index) => (
+                        <div key={`${year}-${index}`} className="record-item">
+                          <RecordDetails record={record} compactLayout={true} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

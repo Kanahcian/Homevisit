@@ -39,13 +39,23 @@ const convertGoogleDriveLink = (url) => {
   return url; // 如果無法解析，返回原始URL
 };
 
-
 // 日期格式化函數
 const formatDate = (dateString) => {
   if (!dateString) return "未記錄";
   
   try {
-    const date = new Date(dateString);
+    let date;
+    
+    // 處理 YYYYMMDD 格式
+    if (/^\d{8}$/.test(dateString)) {
+      const year = dateString.substring(0, 4);
+      const month = dateString.substring(4, 6);
+      const day = dateString.substring(6, 8);
+      date = new Date(year, month - 1, day); // 月份從0開始
+    } else {
+      date = new Date(dateString);
+    }
+    
     if (isNaN(date.getTime())) return dateString; // 如果日期無效，返回原始字符串
     
     return date.toLocaleDateString('zh-TW', {
@@ -57,6 +67,23 @@ const formatDate = (dateString) => {
     console.error("日期格式化錯誤:", error);
     return dateString;
   }
+};
+
+// 解析原始日期用於年份提取
+const parseRawDate = (dateString) => {
+  if (!dateString) return null;
+  
+  // 處理 YYYYMMDD 格式
+  if (/^\d{8}$/.test(dateString)) {
+    const year = dateString.substring(0, 4);
+    const month = dateString.substring(4, 6);
+    const day = dateString.substring(6, 8);
+    return new Date(year, month - 1, day);
+  }
+  
+  // 嘗試直接解析
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? null : date;
 };
 
 // 獲取所有地點
@@ -149,7 +176,8 @@ export const fetchRecords = async (locationId) => {
         return {
           recordId: record.recordid,
           semester: record.semester,
-          date: formatDate(record.date),
+          date: formatDate(record.date), // 格式化後的日期用於顯示
+          rawDate: record.date, // 保留原始日期用於年份提取
           description: record.description || "無訪視筆記",
           photo: convertGoogleDriveLink(record.photo),
           account: record.account,
@@ -286,7 +314,8 @@ export default {
   fetchVillagerDetails,
   findVillagerIdByName,
   convertGoogleDriveLink,
-  formatDate
+  formatDate,
+  parseRawDate
 };
 
 // 添加一個測試函數，方便在控制台中測試

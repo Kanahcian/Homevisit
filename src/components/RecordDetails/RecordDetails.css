@@ -1,5 +1,262 @@
 /* RecordDetails.css - 家訪紀錄詳情樣式 */
 
+/* ===========================================
+   緊湊布局樣式 (新增)
+   =========================================== */
+
+/* 緊湊記錄卡片 */
+.compact-record-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+/* 記錄標題欄 */
+.compact-record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.record-semester {
+  background-color: #e74c3c;
+  color: white;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.record-date {
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 緊湊行布局 */
+.compact-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.compact-row:last-child {
+  margin-bottom: 0;
+}
+
+/* 緊湊區塊 */
+.compact-section {
+  flex: 1;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 8px;
+  background-color: #fafafa;
+}
+
+.compact-section.full-width {
+  flex: 1;
+}
+
+.compact-section.participants-section {
+  flex: 1;
+  min-width: 0; /* 防止 flex 項目溢出 */
+}
+
+/* 區塊標題 */
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+/* 區塊內容 */
+.section-content {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* 參與者標籤 - 緊湊版本 */
+.compact-section .participant-tag {
+  display: inline-block;
+  background-color: #f0f5ff;
+  border: 1px solid #d0e0ff;
+  border-radius: 10px;
+  padding: 3px 8px;
+  margin: 1px 2px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.compact-section .participant-tag.student {
+  background-color: #e8f4fa;
+  border-color: #cce5ff;
+  color: #0066cc;
+}
+
+.compact-section .participant-tag.villager {
+  background-color: #f0f8eb;
+  border-color: #d6f5c6;
+  color: #33801d;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  padding-right: 20px;
+}
+
+.compact-section .participant-tag.villager:after {
+  content: '\f06e';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  opacity: 0.6;
+  color: #33801d;
+}
+
+.compact-section .participant-tag.villager:hover {
+  background-color: #e8f4e5;
+  border-color: #33801d;
+}
+
+.compact-section .participant-tag.villager:hover:after {
+  opacity: 1;
+}
+
+.compact-section .empty-info {
+  color: #999;
+  font-style: italic;
+  font-size: 15px;
+  text-align: center;
+}
+
+.compact-section .participant-hint {
+  display: block;
+  margin-top: 4px;
+  color: #666;
+  font-size: 12px;
+  font-style: italic;
+  text-align: center;
+}
+
+.compact-section .participant-hint i {
+  color: #33801d;
+  margin-right: 2px;
+}
+
+/* 家訪記錄描述 */
+.visit-description {
+  font-size: 15px;
+  line-height: 1.4;
+  color: #333;
+  text-align: left;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+/* 照片專用區塊 - 無邊框無背景 */
+.compact-section.photo-only {
+  border: none;
+  background: none;
+  padding: 8px 0;
+}
+
+/* 緊湊照片容器 */
+.compact-photo-container {
+  text-align: center;
+}
+
+.compact-photo {
+  width: 80%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.compact-photo:hover {
+  transform: scale(1.03);
+}
+
+/* 響應式調整 - 緊湊布局 */
+@media (max-width: 768px) {
+  .compact-record-card {
+    padding: 10px;
+  }
+  
+  .compact-row {
+    gap: 6px;
+  }
+  
+  .compact-section {
+    padding: 6px;
+  }
+  
+  .section-title {
+    font-size: 15px;
+  }
+  
+  .section-content {
+    font-size: 15px;
+  }
+  
+  .compact-section .participant-tag {
+    font-size: 15px;
+    padding: 2px 6px;
+  }
+  
+  .compact-section .participant-tag.villager {
+    padding-right: 18px;
+  }
+  
+  .compact-section .participant-tag.villager:after {
+    font-size: 10px;
+    right: 4px;
+  }
+  
+  .visit-description {
+    font-size: 15px;
+    max-height: 70px;
+  }
+  
+  .compact-photo {
+    width: 90%;
+  }
+  
+  .record-semester {
+    font-size: 15px;
+    padding: 3px 10px;
+  }
+  
+  .record-date {
+    font-size: 15px;
+  }
+  
+  .compact-section .empty-info {
+    font-size: 15px;
+  }
+  
+  .compact-section .participant-hint {
+    font-size: 12px;
+  }
+}
+
+/* ===========================================
+   原始布局樣式 (保留)
+   =========================================== */
+
 /* 整合的資訊區塊 */
 .visit-info-integrated {
   margin-bottom: 20px;
@@ -24,7 +281,7 @@
   color: #333;
 }
 
-.record-date {
+.record-title .record-date {
   color: #666;
   font-size: 14px;
 }
@@ -72,7 +329,7 @@
   padding-left: 28px;
 }
 
-/* 參與者標籤 - 更緊湊的樣式 */
+/* 參與者標籤 - 原始版本 */
 .participant-tag {
   display: inline-block;
   background-color: #f0f5ff;
@@ -214,7 +471,7 @@
   }
 }
 
-/* 響應式調整 */
+/* 響應式調整 - 原始布局 */
 @media (max-width: 768px) {
   .visit-info-integrated {
     padding: 12px;

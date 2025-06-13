@@ -70,47 +70,30 @@ const RecordDetails = ({ record, compactLayout = false }) => {
     setModalOpen(true);
   };
 
-  // 使用紧凑布局时的组件排序
+  // 緊湊布局 - 新的卡片式設計
   if (compactLayout) {
     return (
       <>
-        {/* 整合的资讯区块 - 先显示访视纪录 */}
-        <div className="visit-info-integrated" id="integrated-info">
-          <div className="record-title">
-            <h3>訪視紀錄</h3>
+        {/* 緊湊記錄卡片 */}
+        <div className="compact-record-card">
+          {/* 日期標題 */}
+          <div className="compact-record-header">
+            <span className="record-semester">{record.semester}</span>
             <span className="record-date">{record.date}</span>
           </div>
           
-          <div className="info-section">
-            {/* 學期 */}
-            <div className="info-item semester">
-              <div className="info-item-title">
-                <i className="fas fa-book"></i>
-                <span>學期</span>
-              </div>
-              <div className="info-item-content">
-                {record.semester}
-              </div>
-            </div>
-            
-            {/* 参与学生 */}
-            <div className="info-item students">
-              <div className="info-item-title">
-                <i className="fas fa-users"></i>
-                <span>參與學生</span>
-              </div>
-              <div className="info-item-content">
+          {/* 第一行：參與學生 和 參與村民 */}
+          <div className="compact-row">
+            <div className="compact-section participants-section">
+              <div className="section-title">參與學生</div>
+              <div className="section-content">
                 <ParticipantTags participants={record.students} type="student" />
               </div>
             </div>
             
-            {/* 村民 */}
-            <div className="info-item villagers">
-              <div className="info-item-title">
-                <i className="fas fa-home"></i>
-                <span>村民</span>
-              </div>
-              <div className="info-item-content">
+            <div className="compact-section participants-section">
+              <div className="section-title">參與村民</div>
+              <div className="section-content">
                 <ParticipantTags 
                   participants={record.villagers} 
                   type="villager" 
@@ -119,28 +102,39 @@ const RecordDetails = ({ record, compactLayout = false }) => {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* 访视笔记 - 第二显示 */}
-        <div className="visit-notes">
-          <h3><i className="fas fa-clipboard"></i> 訪視筆記</h3>
-          <p id="visit-notes">{record.description || "無訪視筆記"}</p>
-        </div>
-        
-        {/* 照片区块 - 最后显示 */}
-        <div className="photo-container" id="location-photos">
-          {record.photo ? (
-            <img 
-              src={record.photo} 
-              alt="訪視照片" 
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = '/assets/images/photo-error.png';
-                console.error("照片載入失敗:", record.photo);
-              }}
-            />
-          ) : (
-            <p>暫無照片</p>
+          
+          {/* 第二行：家訪記錄 */}
+          <div className="compact-row">
+            <div className="compact-section full-width">
+              <div className="section-title">家訪記錄</div>
+              <div className="section-content">
+                <div className="visit-description">
+                  {record.description || "無訪視筆記"}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 第三行：照片 */}
+          {record.photo && (
+            <div className="compact-row">
+              <div className="compact-section full-width photo-only">
+                <div className="section-content">
+                  <div className="compact-photo-container">
+                    <img 
+                      src={record.photo} 
+                      alt="訪視照片" 
+                      className="compact-photo"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = '/assets/images/photo-error.png';
+                        console.error("照片載入失敗:", record.photo);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 

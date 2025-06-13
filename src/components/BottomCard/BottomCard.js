@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import './BottomCard.css';
 import '../LoadingAnimation.css';
 import LocationInfo from '../LocationInfo/LocationInfo';
@@ -9,14 +9,84 @@ const BottomCard = ({
   records, 
   isLoading, 
   showRecords, 
-  toggleRecordsView, 
-  currentRecordIndex, 
-  navigateRecords,
+  toggleRecordsView,
   isActive,
   onClose
 }) => {
-  // 取得當前記錄
-  const currentRecord = records && records.length > 0 ? records[currentRecordIndex] : null;
+  // 管理每個年份的展開/收起狀態
+  const [expandedYears, setExpandedYears] = useState(new Set());
+  
+  // 按年份分組記錄
+  const recordsByYear = useMemo(() => {
+    if (!records || records.length === 0) return {};
+    
+    const grouped = {};
+    records.forEach(record => {
+      // 從原始日期中提取年份
+      let year = '未知年份';
+      
+      // 優先使用 rawDate，如果沒有則使用 date
+      const dateToUse = record.rawDate || record.date;
+      
+      if (dateToUse) {
+        // 嘗試不同的日期解析方法
+        
+        // 方法1: 如果是 YYYYMMDD 格式
+        if (/^\d{8}$/.test(dateToUse)) {
+          year = dateToUse.substring(0, 4);
+        }
+        // 方法2: 如果包含 - 分隔符 (YYYY-MM-DD)
+        else if (dateToUse.includes('-')) {
+          const parts = dateToUse.split('-');
+          if (parts[0] && /^\d{4}$/.test(parts[0])) {
+            year = parts[0];
+          }
+        }
+        // 方法3: 如果是中文格式，嘗試提取年份
+        else {
+          const yearMatch = dateToUse.match(/(\d{4})/);
+          if (yearMatch) {
+            year = yearMatch[1];
+          }
+        }
+      }
+      
+      if (!grouped[year]) {
+        grouped[year] = [];
+      }
+      grouped[year].push(record);
+    });
+    
+    // 按年份排序（最新的在前）
+    const sortedYears = Object.keys(grouped).sort((a, b) => {
+      if (a === '未知年份') return 1;
+      if (b === '未知年份') return -1;
+      return parseInt(b) - parseInt(a);
+    });
+    
+    const sortedGrouped = {};
+    sortedYears.forEach(year => {
+      // 每年內的記錄也按日期排序（最新的在前）
+      sortedGrouped[year] = grouped[year].sort((a, b) => {
+        const dateA = a.rawDate || a.date || '';
+        const dateB = b.rawDate || b.date || '';
+        return dateB.localeCompare(dateA);
+      });
+    });
+    
+    return sortedGrouped;
+  }, [records]);
+  
+  // 切換年份展開/收起狀態
+  const toggleYear = (year) => {
+    const newExpandedYears = new Set(expandedYears);
+    if (newExpandedYears.has(year)) {
+      newExpandedYears.delete(year);
+    } else {
+      newExpandedYears.add(year);
+    }
+    setExpandedYears(newExpandedYears);
+  };
   
   // 調整按鈕位置
   useEffect(() => {
@@ -40,72 +110,6 @@ const BottomCard = ({
       adjustButtonPositions(false);
     };
   }, [isActive]);
-  
-  // 處理滑動手勢
-  useEffect(() => {
-    if (!isActive || !showRecords) return;
-    
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const minSwipeDistance = 50;
-    
-    const handleTouchStart = (event) => {
-      touchStartX = event.changedTouches[0].screenX;
-    };
-    
-    const handleTouchEnd = (event) => {
-      touchEndX = event.changedTouches[0].screenX;
-      handleSwipe();
-    };
-    
-    const handleSwipe = () => {
-      const swipeDistance = touchEndX - touchStartX;
-      
-      if (Math.abs(swipeDistance) < minSwipeDistance) return;
-      
-      if (swipeDistance > 0 && currentRecordIndex > 0) {
-        // 向右滑動（上一條記錄）
-        navigateRecords('prev');
-        animateContent('right');
-      } else if (swipeDistance < 0 && currentRecordIndex < records.length - 1) {
-        // 向左滑動（下一條記錄）
-        navigateRecords('next');
-        animateContent('left');
-      }
-    };
-    
-    const animateContent = (direction) => {
-      const contentElements = document.querySelectorAll('.mobile-record-section > div');
-      
-      const translateValue = direction === 'left' ? '-15px' : '15px';
-      
-      contentElements.forEach(element => {
-        if (element) {
-          element.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
-          element.style.opacity = '0.5';
-          element.style.transform = `translateX(${translateValue})`;
-          
-          setTimeout(() => {
-            element.style.opacity = '1';
-            element.style.transform = 'translateX(0)';
-          }, 250);
-        }
-      });
-    };
-    
-    const recordsSection = document.getElementById('mobile-records-section');
-    if (recordsSection) {
-      recordsSection.addEventListener('touchstart', handleTouchStart);
-      recordsSection.addEventListener('touchend', handleTouchEnd);
-    }
-    
-    return () => {
-      if (recordsSection) {
-        recordsSection.removeEventListener('touchstart', handleTouchStart);
-        recordsSection.removeEventListener('touchend', handleTouchEnd);
-      }
-    };
-  }, [isActive, showRecords, currentRecordIndex, records, navigateRecords]);
   
   if (!isActive) {
     return null;
@@ -152,7 +156,6 @@ const BottomCard = ({
                 </div>
               </div>
             </div>
-            {/* <div className="loading-text">加載家訪紀錄中...</div> */}
           </div>
         )}
 
@@ -177,48 +180,46 @@ const BottomCard = ({
           </div>
         )}
         
-        {/* 家訪紀錄區塊 */}
+        {/* 家訪紀錄區塊 - 改版後的年份分組顯示 */}
         {showRecords && records && records.length > 0 && (
           <div id="mobile-records-section" className="records-section">
-            {/* 紀錄切換導覽列 */}
-            <div className="records-nav">
-              <button 
-                id="mobile-prev-record" 
-                className="nav-btn"
-                onClick={() => navigateRecords('prev')}
-                disabled={currentRecordIndex === 0}
-              >
-                &lt;
-              </button>
-              <span id="mobile-record-indicator">
-                紀錄 {currentRecordIndex + 1}/{records.length}
-              </span>
-              <button 
-                id="mobile-next-record" 
-                className="nav-btn"
-                onClick={() => navigateRecords('next')}
-                disabled={currentRecordIndex === records.length - 1}
-              >
-                &gt;
-              </button>
+            <div className="records-summary">
+              <span>共 {records.length} 筆記錄</span>
             </div>
             
-            {/* 滑動指示點 */}
-            <div className="swipe-indicators">
-              {records.map((_, index) => (
-                <div 
-                  key={`indicator-${index}`} 
-                  className={`swipe-indicator ${index === currentRecordIndex ? 'active' : ''}`}
-                />
+            {/* 按年份分組的記錄 */}
+            <div className="records-by-year">
+              {Object.entries(recordsByYear).map(([year, yearRecords]) => (
+                <div key={year} className="year-group">
+                  {/* 年份標題和展開/收起按鈕 */}
+                  <div 
+                    className="year-header"
+                    onClick={() => toggleYear(year)}
+                  >
+                    <div className="year-info">
+                      <span className="year-title">{year}</span>
+                      <span className="year-count">({yearRecords.length}筆)</span>
+                    </div>
+                    <button className="year-toggle-btn">
+                      {expandedYears.has(year) ? 
+                        <i className="fas fa-minus"></i> : 
+                        <i className="fas fa-plus"></i>
+                      }
+                    </button>
+                  </div>
+                  
+                  {/* 該年份的記錄列表 */}
+                  {expandedYears.has(year) && (
+                    <div className="year-records">
+                      {yearRecords.map((record, index) => (
+                        <div key={`${year}-${index}`} className="record-item">
+                          <RecordDetails record={record} compactLayout={true} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
-            </div>
-            
-            {/* 滑動提示 */}
-            <div className="swipe-hint">← 左右滑動切換紀錄 →</div>
-            
-            {/* 家訪紀錄詳情 - 使用緊湊布局 */}
-            <div className="mobile-record-section">
-              {currentRecord && <RecordDetails record={currentRecord} compactLayout={true} />}
             </div>
           </div>
         )}
