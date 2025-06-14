@@ -39,22 +39,6 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     layers[currentLayerIndex].addTo(map);
     layersRef.current = layers;
     
-    // 新增切換地圖模式的按鈕
-    const switchButton = L.control({ position: 'bottomright' });
-    switchButton.onAdd = function(map) {
-      const button = L.DomUtil.create('button', 'map-switch-button');
-      button.innerHTML = '<img src="/assets/images/layers.png" class="map-switch-icon">';
-      
-      button.onclick = function() {
-        map.removeLayer(layersRef.current[currentLayerIndex]);
-        const nextIndex = (currentLayerIndex + 1) % layersRef.current.length;
-        setCurrentLayerIndex(nextIndex);
-        map.addLayer(layersRef.current[nextIndex]);
-      };
-      return button;
-    };
-    switchButton.addTo(map);
-    
     // 保存地圖實例
     mapInstanceRef_internal.current = map;
 
@@ -160,6 +144,16 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     );
   };
 
+  // 處理地圖圖層切換
+  const handleLayerSwitch = () => {
+    if (mapInstanceRef.current) {
+      mapInstanceRef.current.removeLayer(layersRef.current[currentLayerIndex]);
+      const nextIndex = (currentLayerIndex + 1) % layersRef.current.length;
+      setCurrentLayerIndex(nextIndex);
+      mapInstanceRef.current.addLayer(layersRef.current[nextIndex]);
+    }
+  };
+
   // 處理新增地點按鈕點擊
   const handleAddLocationClick = () => {
     setShowAddLocationModal(true);
@@ -178,35 +172,42 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
   const handleCloseModal = () => {
     setShowAddLocationModal(false);
   };
-  
-  // 將定位按鈕的點擊事件連接到組件的方法
-  useEffect(() => {
-    const locateBtn = document.getElementById("locate-btn");
-    if (locateBtn) {
-      locateBtn.addEventListener("click", handleLocateUser);
-    }
-    
-    return () => {
-      if (locateBtn) {
-        locateBtn.removeEventListener("click", handleLocateUser);
-      }
-    };
-  }, []);
 
   return (
     <>
       <div id="map" ref={mapRef} className="map-container"></div>
       
-      {/* 管理員專用：新增地點按鈕 */}
-      {isAdmin && (
+      {/* 右下角按鈕群組 */}
+      <div className="map-controls-container">
+        {/* 管理員專用：新增地點按鈕 */}
+        {isAdmin && (
+          <button 
+            className="map-control-btn add-location-button"
+            onClick={handleAddLocationClick}
+            title="新增地點"
+          >
+            <i className="fas fa-plus"></i>
+          </button>
+        )}
+
+        {/* 地圖圖層切換按鈕 */}
         <button 
-          className="add-location-button"
-          onClick={handleAddLocationClick}
-          title="新增地點"
+          className="map-control-btn map-switch-button"
+          onClick={handleLayerSwitch}
+          title="切換地圖圖層"
         >
-          <i className="fas fa-plus"></i>
+          <img src="/assets/images/layers.png" className="map-switch-icon" alt="切換圖層" />
         </button>
-      )}
+
+        {/* 定位按鈕 */}
+        <button 
+          className="map-control-btn locate-button"
+          onClick={handleLocateUser}
+          title="定位到我的位置"
+        >
+          📍
+        </button>
+      </div>
 
       {/* 新增地點模態框 */}
       {showAddLocationModal && (

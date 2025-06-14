@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react'; // 確保導入 useEffect
 import './SidePanel.css';
 import '../LoadingAnimation.css'; 
 import LocationInfo from '../LocationInfo/LocationInfo';
@@ -24,6 +24,34 @@ const SidePanel = ({
   // 管理員模態框狀態
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // 【新增】調整按鈕位置 - 桌面版側邊欄
+  useEffect(() => {
+    const adjustButtonPositions = (isActive) => {
+      const controlsContainer = document.querySelector('.map-controls-container');
+      const appContainer = document.querySelector('.app-container');
+      
+      if (isActive) {
+        // 側邊欄打開時，按鈕向右移動避免被遮蓋
+        if (appContainer) {
+          appContainer.classList.add('sidebar-open');
+        }
+      } else {
+        // 側邊欄關閉時，恢復按鈕位置
+        if (appContainer) {
+          appContainer.classList.remove('sidebar-open');
+        }
+      }
+    };
+    
+    adjustButtonPositions(isActive);
+    
+    return () => {
+      // 清理時重置
+      adjustButtonPositions(false);
+    };
+  }, [isActive]);
+
   // 按年份分組記錄
   const recordsByYear = useMemo(() => {
     if (!records || records.length === 0) return {};

@@ -1,172 +1,246 @@
-/* Map.css - 地圖相關樣式 */
+/* Map.css - 地圖相關樣式 (優化版) */
 
 .map-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-  
-  /* 地圖圖層切換按鈕 */
-  .map-switch-button {
-    position: absolute !important;
-    width: 60px;
-    height: 60px;
-    bottom: 110px;
-    right: 10px;
-    border-radius: 30% !important;
-    cursor: pointer;
-    z-index: 900;
-    border: none !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    padding: 0 !important;
-    background: white;
-  }
-  
-  .map-switch-button:hover {
-    background: rgba(200, 200, 200, 0.9);
-  }
-  
-  .map-switch-icon {
-    width: 70%;
-    height: 70%;
-    object-fit: contain;
-  }
-  
-  /* 地圖圖層展開選單 */
-  .leaflet-control-layers-expanded {
-    width: auto !important;
-    min-width: 120px !important;
-    background: white;
-    border-radius: 10px !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
-    padding: 15px !important;
-  }
-  
-  /* 定位按鈕 */
-  .locate-button {
-    position: fixed;
-    bottom: 50px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background: white;
-    border: none;
-    border-radius: 30%;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    font-size: 15px;
-    cursor: pointer;
-    z-index: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .locate-button:hover {
-    background: rgba(200, 200, 200, 0.9);
-  }
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
 
-  /* 新增地點按鈕 */
+/* 右下角按鈕群組容器 */
+.map-controls-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 1100; /* 提高z-index，確保按鈕在側邊欄之上 */
+  align-items: flex-end;
+}
+
+/* 通用按鈕樣式 */
+.map-control-btn {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border: none;
+  border-radius: 30%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  color: #777;
+  font-size: 18px;
+}
+
+.map-control-btn:hover {
+  background: rgba(200, 200, 200, 0.9);
+  color: #333;
+  transform: scale(1.05);
+}
+
+.map-control-btn:active {
+  transform: scale(0.95);
+}
+
+/* 定位按鈕 */
+.locate-button {
+  order: 3; /* 最下面 */
+}
+
+/* 地圖切換按鈕 */
+.map-switch-button {
+  order: 2; /* 中間 */
+  position: relative !important;
+  bottom: auto !important;
+  right: auto !important;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+.map-switch-icon {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+/* 新增地點按鈕 (管理員專用) */
+.add-location-button {
+  order: 1; /* 最上面 */
+  position: relative !important;
+  bottom: auto !important;
+  right: auto !important;
+  color: #4a8fe7;
+  font-size: 20px;
+}
+
+.add-location-button:hover {
+  color: #3972c0;
+  background: rgba(74, 143, 231, 0.1);
+}
+
+/* 響應式設計 - 小屏幕 */
+@media (max-width: 768px) {
+  .map-controls-container {
+    bottom: 15px;
+    right: 15px;
+    gap: 10px;
+  }
+  
+  .map-control-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 16px;
+  }
+  
   .add-location-button {
-    position: absolute !important;
-    width: 60px;
-    height: 60px;
-    bottom: 190px;
-    right: 20px;
-    border-radius: 30% !important;
-    cursor: pointer;
-    z-index: 900;
-    border: none !important;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    color: #777;
     font-size: 18px;
-    transition: all 0.2s ease;
-    padding: 0 !important;
-    overflow: hidden;
+  }
+}
+
+/* 響應式設計 - 極小屏幕 */
+@media (max-width: 480px) {
+  .map-controls-container {
+    bottom: 12px;
+    right: 12px;
+    gap: 8px;
   }
   
-  .add-location-button:hover {
-    background: rgba(200, 200, 200, 0.9);
-    color: #333;
+  .map-control-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 15px;
   }
   
-  /* 自定義標記樣式 */
-  .custom-marker-icon {
-    display: block;
+  .add-location-button {
+    font-size: 16px;
+  }
+}
+
+/* 響應式設計 - 小高度屏幕 (例如橫屏手機) */
+@media (max-height: 500px) {
+  .map-controls-container {
+    bottom: 10px;
+    gap: 6px;
+  }
+  
+  .map-control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+}
+
+/* 響應式設計 - 超小高度 */
+@media (max-height: 400px) {
+  .map-controls-container {
+    bottom: 8px;
+    gap: 4px;
+  }
+  
+  .map-control-btn {
     width: 35px;
     height: 35px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+    font-size: 12px;
   }
-  
-  /* 標記彈出窗口樣式 */
-  .leaflet-popup-content-wrapper {
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  
-  .leaflet-popup-content {
-    margin: 12px;
-    min-width: 150px;
-  }
-  
-  .leaflet-popup-close-button {
-    top: 8px;
-    right: 8px;
-  }
-  
-  /* 用戶位置標記的圈圈樣式 */
-  .user-location-circle {
-    stroke: #4a8fe7;
-    stroke-width: 1;
-    fill: rgba(74, 143, 231, 0.2);
-  }
-  
-  /* 響應式調整 */
-  @media (max-width: 768px) {
-    .map-switch-button {
-      bottom: 100px !important;
-      width: 50px;
-      height: 50px;
-    }
-    
-    .locate-button {
-      width: 50px;
-      height: 50px;
-    }
+}
 
-    .add-location-button {
-      bottom: 170px !important;
-      width: 50px;
-      height: 50px;
-      font-size: 16px;
-    }
+/* 當側邊欄或底部卡片打開時的調整 */
+/* 移除側邊欄打開時的按鈕位置調整，讓按鈕保持原位 */
+.sidebar-open .map-controls-container {
+  /* right: calc(500px + 20px); 註解掉這行，讓按鈕保持原位 */
+  right: 20px; /* 保持原始位置 */
+}
+
+@media (max-width: 1024px) {
+  .sidebar-open .map-controls-container {
+    right: 20px; /* 手機版不需要調整，因為使用底部卡片 */
+  }
+}
+
+/* 確保按鈕在底部卡片打開時隱藏 (通過 JS 控制) */
+.bottom-card-open .map-controls-container {
+  display: none;
+}
+
+/* 提供額外的安全距離，避免與其他UI元素重疊 */
+@media (max-width: 380px) {
+  .map-controls-container {
+    bottom: 15px;
+    right: 10px;
+  }
+}
+
+/* 確保在超寬屏幕上按鈕位置適當 */
+@media (min-width: 1920px) {
+  .map-controls-container {
+    bottom: 30px;
+    right: 30px;
   }
   
-  /* 確保地圖控件在側邊欄打開時仍然可見 */
-  .sidebar-open .leaflet-control-container {
-    margin-left: 350px;
+  .map-control-btn {
+    width: 70px;
+    height: 70px;
+    font-size: 20px;
   }
-  
-  /* 地圖縮放控件樣式 */
-  .leaflet-control-zoom {
-    display: none; /* 隱藏預設的縮放控件 */
-  }
-  
-  /* 地圖歸因信息樣式 */
-  .leaflet-control-attribution {
-    font-size: 10px;
-    background-color: rgba(255, 255, 255, 0.7);
-    padding: 2px 5px;
-  }
+}
+
+/* 地圖圖層展開選單樣式調整 */
+.leaflet-control-layers-expanded {
+  width: auto !important;
+  min-width: 120px !important;
+  background: white;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+  padding: 15px !important;
+}
+
+/* 自定義標記樣式 */
+.custom-marker-icon {
+  display: block;
+  width: 35px;
+  height: 35px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 標記彈出窗口樣式 */
+.leaflet-popup-content-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 12px;
+  min-width: 150px;
+}
+
+.leaflet-popup-close-button {
+  top: 8px;
+  right: 8px;
+}
+
+/* 用戶位置標記的圈圈樣式 */
+.user-location-circle {
+  stroke: #4a8fe7;
+  stroke-width: 1;
+  fill: rgba(74, 143, 231, 0.2);
+}
+
+/* 地圖縮放控件樣式 */
+.leaflet-control-zoom {
+  display: none; /* 隱藏預設的縮放控件 */
+}
+
+/* 地圖歸因信息樣式 */
+.leaflet-control-attribution {
+  font-size: 10px;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 2px 5px;
+}

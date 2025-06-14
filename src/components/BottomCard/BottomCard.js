@@ -99,26 +99,39 @@ const BottomCard = ({
   
   // 調整按鈕位置
   useEffect(() => {
-    const adjustButtonPositions = (isCardActive) => {
-      const locateBtn = document.getElementById('locate-btn');
-      const mapSwitchBtn = document.querySelector('.map-switch-button');
-      
-      if (isCardActive) {
-        if (locateBtn) locateBtn.style.display = 'none';
-        if (mapSwitchBtn) mapSwitchBtn.style.display = 'none';
-      } else {
-        if (locateBtn) locateBtn.style.display = 'flex';
-        if (mapSwitchBtn) mapSwitchBtn.style.display = 'flex';
+  const adjustButtonPositions = (isCardActive) => {
+    // 新的按鈕控制邏輯 - 統一管理按鈕容器
+    const controlsContainer = document.querySelector('.map-controls-container');
+    const appContainer = document.querySelector('.app-container');
+    
+    if (isCardActive) {
+      // 底部卡片打開時隱藏按鈕
+      if (controlsContainer) {
+        controlsContainer.style.display = 'none';
       }
-    };
-    
-    adjustButtonPositions(isActive);
-    
-    return () => {
-      // 清理時重置按鈕
-      adjustButtonPositions(false);
-    };
-  }, [isActive]);
+      // 添加CSS類來標記狀態
+      if (appContainer) {
+        appContainer.classList.add('bottom-card-open');
+      }
+    } else {
+      // 底部卡片關閉時顯示按鈕
+      if (controlsContainer) {
+        controlsContainer.style.display = 'flex';
+      }
+      // 移除CSS類
+      if (appContainer) {
+        appContainer.classList.remove('bottom-card-open');
+      }
+    }
+  };
+  
+  adjustButtonPositions(isActive);
+  
+  return () => {
+    // 清理時重置按鈕
+    adjustButtonPositions(false);
+  };
+}, [isActive]);
   
   if (!isActive) {
     return null;
