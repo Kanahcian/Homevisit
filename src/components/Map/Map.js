@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Map.css';
 import L from 'leaflet';
+import AddLocationModal from './AddLocationModal';
 
-const Map = ({ locations, onLocationSelect, selectedLocation }) => {
+const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocationAdded }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
   const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
   const layersRef = useRef([]);
+  const [showAddLocationModal, setShowAddLocationModal] = useState(false);
 
   // 初始化地圖
   useEffect(() => {
@@ -152,6 +154,25 @@ const Map = ({ locations, onLocationSelect, selectedLocation }) => {
       }
     );
   };
+
+  // 處理新增地點按鈕點擊
+  const handleAddLocationClick = () => {
+    setShowAddLocationModal(true);
+  };
+
+  // 處理新增地點成功
+  const handleLocationAdded = (newLocation) => {
+    setShowAddLocationModal(false);
+    // 通知父組件重新載入地點資料
+    if (onLocationAdded) {
+      onLocationAdded(newLocation);
+    }
+  };
+
+  // 處理模態框關閉
+  const handleCloseModal = () => {
+    setShowAddLocationModal(false);
+  };
   
   // 將定位按鈕的點擊事件連接到組件的方法
   useEffect(() => {
@@ -167,7 +188,31 @@ const Map = ({ locations, onLocationSelect, selectedLocation }) => {
     };
   }, []);
 
-  return <div id="map" ref={mapRef} className="map-container"></div>;
+  return (
+    <>
+      <div id="map" ref={mapRef} className="map-container"></div>
+      
+      {/* 管理員專用：新增地點按鈕 */}
+      {isAdmin && (
+        <button 
+          className="add-location-button"
+          onClick={handleAddLocationClick}
+          title="新增地點"
+        >
+          <i className="fas fa-plus"></i>
+        </button>
+      )}
+
+      {/* 新增地點模態框 */}
+      {showAddLocationModal && (
+        <AddLocationModal
+          onLocationAdded={handleLocationAdded}
+          onClose={handleCloseModal}
+          mapInstance={mapInstanceRef.current}
+        />
+      )}
+    </>
+  );
 };
 
 export default Map;

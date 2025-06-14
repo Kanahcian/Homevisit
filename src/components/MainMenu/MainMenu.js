@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import './MainMenu.css';
 
-const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen }) => {
+const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, isAdmin, onAdminLogin, onAdminLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState(['faq']); // 預設展開家訪大哉問
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  // 登入相關狀態
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
   
   // 監聽窗口尺寸變化
   useEffect(() => {
@@ -18,15 +23,27 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
     };
   }, []);
   
-  // 主選單項目
-  const menuItems = [
-    { id: 'dedication', label: '獻給' },
-    { id: 'origin', label: '緣起' },
-    { id: 'intro', label: '序言' },
-    { id: 'contacts', label: '通訊錄' },
-    { id: 'students', label: '學生名單' },
-    { id: 'faq', label: '家訪大哉問', hasChildren: true }
-  ];
+  // 主選單項目 - 根據管理員狀態顯示不同項目
+  const getMenuItems = () => {
+    const basicItems = [
+      { id: 'dedication', label: '獻給' },
+      { id: 'origin', label: '緣起' },
+      { id: 'intro', label: '序言' },
+      { id: 'contacts', label: '通訊錄' },
+      { id: 'students', label: '學生名單' },
+      { id: 'faq', label: '家訪大哉問', hasChildren: true }
+    ];
+    
+    if (isAdmin) {
+      // 管理員專用項目（目前先保持與一般用戶相同）
+      return [
+        ...basicItems,
+        // { id: 'admin-panel', label: '🔧 管理員面板', isAdminOnly: true }
+      ];
+    }
+    
+    return basicItems;
+  };
   
   // 家訪大哉問子項目
   const faqSubItems = [
@@ -84,6 +101,45 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
       setIsMenuOpen(false);
     }
   };
+
+  // 處理登入
+  const handleLogin = () => {
+    if (loginPassword === 'Kana') {
+      onAdminLogin(true);
+      setShowLoginModal(false);
+      setLoginPassword('');
+      setLoginError('');
+      // 關閉選單 (在移動設備上)
+      if (isMobile) {
+        setIsMenuOpen(false);
+      }
+    } else {
+      setLoginError('密碼錯誤');
+    }
+  };
+
+  // 處理登出
+  const handleLogout = () => {
+    onAdminLogout();
+    // 關閉選單 (在移動設備上)
+    if (isMobile) {
+      setIsMenuOpen(false);
+    }
+  };
+
+  // 關閉登入模態框
+  const closeLoginModal = () => {
+    setShowLoginModal(false);
+    setLoginPassword('');
+    setLoginError('');
+  };
+
+  // 處理鍵盤事件
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
   
   // 根據全屏模式渲染不同內容
   if (isFullScreen) {
@@ -102,15 +158,18 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
         <h1 className="content-title">
           {activeSection === 'dedication' ? '獻給' :
            activeSection === 'origin' ? '緣起' :
-           activeSection === 'contacts' ? '序言' :
+           activeSection === 'intro' ? '序言' :
            activeSection === 'contacts' ? '通訊錄' :
            activeSection === 'students' ? '學生名單' :
            activeSection === 'faq' ? '家訪大哉問' :
+          //  activeSection === 'admin-panel' ? '管理員面板' :
            activeSection.startsWith('faq-') ? `家訪大哉問 - ${faqSubItems.find(item => item.id === activeSection)?.label}` :
            ''}
         </h1>
         
         <div className="content-body">
+          
+
           {activeSection === 'dedication' && (
             <div>
                 <p style={{textAlign: 'center', fontSize: '18px', marginBottom: '20px'}}>
@@ -583,7 +642,10 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
       {/* 側邊選單 */}
       <aside className={`side-menu ${isMenuOpen ? 'open' : ''}`}>
         <div className="menu-header">
-          <h2 className="menu-title">加拿家家訪地圖</h2>
+          <h2 className="menu-title">
+            加拿家家訪地圖
+            {isAdmin && <span className="admin-badge">管理員</span>}
+          </h2>
           <button 
             className="close-button"
             onClick={toggleMenu}
@@ -594,7 +656,7 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
         </div>
         
         <nav className="menu-items">
-          {menuItems.map(item => (
+          {getMenuItems().map(item => (
             <div className="menu-item" key={item.id}>
               {/* 家訪大哉問特殊處理 */}
               {item.hasChildren ? (
@@ -619,7 +681,7 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
                 </>
               ) : (
                 <button 
-                  className={`menu-item-btn ${activeSection === item.id ? 'active' : ''}`}
+                  className={`menu-item-btn ${activeSection === item.id ? 'active' : ''} ${item.isAdminOnly ? 'admin-only' : ''}`}
                   onClick={() => selectMenuItem(item.id, false)}
                 >
                   {item.label}
@@ -627,8 +689,72 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen })
               )}
             </div>
           ))}
+          
+          {/* 管理員登入/登出按鈕 */}
+          <div className="menu-item admin-section">
+            {!isAdmin ? (
+              <button 
+                className="menu-item-btn admin-login-btn"
+                onClick={() => setShowLoginModal(true)}
+              >
+                🔐 管理員登入
+              </button>
+            ) : (
+              <button 
+                className="menu-item-btn admin-logout-btn"
+                onClick={handleLogout}
+              >
+                🚪 登出
+              </button>
+            )}
+          </div>
         </nav>
       </aside>
+
+      {/* 登入模態框 */}
+      {showLoginModal && (
+        <div className="login-modal-overlay">
+          <div className="login-modal">
+            <div className="login-modal-header">
+              <h3>管理員登入</h3>
+              <button 
+                className="login-modal-close"
+                onClick={closeLoginModal}
+              >
+                ×
+              </button>
+            </div>
+            <div className="login-modal-body">
+              <input
+                type="password"
+                placeholder="請輸入密碼"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="login-input"
+                autoFocus
+              />
+              {loginError && (
+                <div className="login-error">{loginError}</div>
+              )}
+            </div>
+            <div className="login-modal-footer">
+              <button 
+                className="login-cancel-btn"
+                onClick={closeLoginModal}
+              >
+                取消
+              </button>
+              <button 
+                className="login-submit-btn"
+                onClick={handleLogin}
+              >
+                登入
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

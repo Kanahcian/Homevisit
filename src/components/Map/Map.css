@@ -71,6 +71,34 @@
   .locate-button:hover {
     background: rgba(200, 200, 200, 0.9);
   }
+
+  /* 新增地點按鈕 */
+  .add-location-button {
+    position: absolute !important;
+    width: 60px;
+    height: 60px;
+    bottom: 190px;
+    right: 20px;
+    border-radius: 30% !important;
+    cursor: pointer;
+    z-index: 900;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: #777;
+    font-size: 18px;
+    transition: all 0.2s ease;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  
+  .add-location-button:hover {
+    background: rgba(200, 200, 200, 0.9);
+    color: #333;
+  }
   
   /* 自定義標記樣式 */
   .custom-marker-icon {
@@ -116,6 +144,13 @@
     .locate-button {
       width: 50px;
       height: 50px;
+    }
+
+    .add-location-button {
+      bottom: 170px !important;
+      width: 50px;
+      height: 50px;
+      font-size: 16px;
     }
   }
   

@@ -88,6 +88,19 @@
     font-size: 18px;
     font-weight: 600;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* 管理員徽章 */
+  .admin-badge {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
   }
   
   .close-button {
@@ -157,6 +170,43 @@
     background-color: #f5f1dc; /* 淡土黃色背景 */
     color: #8c7851; /* 深土黃色文字 */
     font-weight: 500;
+  }
+
+  /* 管理員專用項目樣式 */
+  .menu-item-btn.admin-only {
+    background-color: #fff5f5;
+    border-left: 4px solid #e74c3c;
+  }
+
+  .menu-item-btn.admin-only:hover {
+    background-color: #ffe5e5;
+  }
+
+  /* 管理員區域 */
+  .admin-section {
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+
+  /* 管理員登入按鈕 */
+  .admin-login-btn {
+    color: #2980b9 !important;
+    font-weight: 500;
+  }
+
+  .admin-login-btn:hover {
+    background-color: #e8f4f8 !important;
+  }
+
+  /* 管理員登出按鈕 */
+  .admin-logout-btn {
+    color: #e74c3c !important;
+    font-weight: 500;
+  }
+
+  .admin-logout-btn:hover {
+    background-color: #fdeaea !important;
   }
   
   /* 子選單 */
@@ -252,6 +302,133 @@
     opacity: 1;
     visibility: visible;
   }
+
+  /* 登入模態框樣式 */
+  .login-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .login-modal {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+  }
+
+  .login-modal-header {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .login-modal-header h3 {
+    margin: 0;
+    color: #333;
+    font-size: 18px;
+  }
+
+  .login-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .login-modal-close:hover {
+    color: #333;
+  }
+
+  .login-modal-body {
+    padding: 30px 20px;
+  }
+
+  .login-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .login-input:focus {
+    outline: none;
+    border-color: #2980b9;
+  }
+
+  .login-error {
+    margin-top: 10px;
+    color: #e74c3c;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .login-modal-footer {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .login-cancel-btn,
+  .login-submit-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .login-cancel-btn {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .login-cancel-btn:hover {
+    background-color: #5a6268;
+  }
+
+  .login-submit-btn {
+    background-color: #2980b9;
+    color: white;
+  }
+
+  .login-submit-btn:hover {
+    background-color: #21618c;
+  }
+
+  /* 模態框動畫 */
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
   
   /* 響應式調整 */
   @media (max-width: 768px) {
@@ -269,6 +446,15 @@
     
     .content-body {
       padding: 15px;
+    }
+
+    .login-modal {
+      width: 95%;
+      margin: 20px;
+    }
+
+    .login-modal-body {
+      padding: 20px 15px;
     }
     
     /* 調整搜尋欄大小，防止擋住選單按鈕 */

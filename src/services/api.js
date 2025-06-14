@@ -39,23 +39,13 @@ const convertGoogleDriveLink = (url) => {
   return url; // 如果無法解析，返回原始URL
 };
 
+
 // 日期格式化函數
 const formatDate = (dateString) => {
   if (!dateString) return "未記錄";
   
   try {
-    let date;
-    
-    // 處理 YYYYMMDD 格式
-    if (/^\d{8}$/.test(dateString)) {
-      const year = dateString.substring(0, 4);
-      const month = dateString.substring(4, 6);
-      const day = dateString.substring(6, 8);
-      date = new Date(year, month - 1, day); // 月份從0開始
-    } else {
-      date = new Date(dateString);
-    }
-    
+    const date = new Date(dateString);
     if (isNaN(date.getTime())) return dateString; // 如果日期無效，返回原始字符串
     
     return date.toLocaleDateString('zh-TW', {
@@ -67,23 +57,6 @@ const formatDate = (dateString) => {
     console.error("日期格式化錯誤:", error);
     return dateString;
   }
-};
-
-// 解析原始日期用於年份提取
-const parseRawDate = (dateString) => {
-  if (!dateString) return null;
-  
-  // 處理 YYYYMMDD 格式
-  if (/^\d{8}$/.test(dateString)) {
-    const year = dateString.substring(0, 4);
-    const month = dateString.substring(4, 6);
-    const day = dateString.substring(6, 8);
-    return new Date(year, month - 1, day);
-  }
-  
-  // 嘗試直接解析
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
 };
 
 // 獲取所有地點
@@ -105,6 +78,47 @@ export const fetchLocations = async () => {
     }
   } catch (error) {
     console.error("API 請求錯誤:", error);
+    throw error;
+  }
+};
+
+// 新增地點
+export const addLocation = async (locationData) => {
+  try {
+    console.log('正在新增地點:', locationData);
+    
+    const response = await fetch(`${API_BASE_URL}/api/location`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(locationData)
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        }
+      } catch (e) {
+        // 如果無法解析錯誤響應，使用默認錯誤訊息
+      }
+      throw new Error(errorMessage);
+    }
+    
+    const data = await response.json();
+    
+    if (data.status === "success") {
+      console.log('地點新增成功:', data.data);
+      return data.data;
+    } else {
+      console.error("新增地點失敗", data);
+      throw new Error(data.message || '新增地點失敗');
+    }
+  } catch (error) {
+    console.error("新增地點 API 請求錯誤:", error);
     throw error;
   }
 };
@@ -176,8 +190,7 @@ export const fetchRecords = async (locationId) => {
         return {
           recordId: record.recordid,
           semester: record.semester,
-          date: formatDate(record.date), // 格式化後的日期用於顯示
-          rawDate: record.date, // 保留原始日期用於年份提取
+          date: formatDate(record.date),
           description: record.description || "無訪視筆記",
           photo: convertGoogleDriveLink(record.photo),
           account: record.account,
@@ -313,9 +326,9 @@ export default {
   fetchRecords,
   fetchVillagerDetails,
   findVillagerIdByName,
+  addLocation,
   convertGoogleDriveLink,
-  formatDate,
-  parseRawDate
+  formatDate
 };
 
 // 添加一個測試函數，方便在控制台中測試

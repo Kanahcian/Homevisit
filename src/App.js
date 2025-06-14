@@ -15,8 +15,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
   const [showRecords, setShowRecords] = useState(false);
+  const [currentRecordIndex, setCurrentRecordIndex] = useState(0);
   const [isFullScreenContent, setIsFullScreenContent] = useState(false);
   const [activeMenuSection, setActiveMenuSection] = useState('home');
+  
+  // 新增管理員狀態
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // 處理響應式設計
   useEffect(() => {
@@ -30,17 +34,25 @@ function App() {
 
   // 初始加載所有地點
   useEffect(() => {
-    const loadLocations = async () => {
-      try {
-        const data = await fetchLocations();
-        setLocations(data);
-      } catch (error) {
-        console.error('無法加載地點資料:', error);
-      }
-    };
-
     loadLocations();
   }, []);
+
+  // 載入地點的函數（提取出來以便重用）
+  const loadLocations = async () => {
+    try {
+      const data = await fetchLocations();
+      setLocations(data);
+    } catch (error) {
+      console.error('無法加載地點資料:', error);
+    }
+  };
+
+  // 處理地點新增成功
+  const handleLocationAdded = (newLocation) => {
+    console.log('新地點已新增:', newLocation);
+    // 重新載入所有地點
+    loadLocations();
+  };
 
   // 選擇地點時加載相關記錄
   const handleLocationSelect = async (location) => {
@@ -49,6 +61,7 @@ function App() {
     
     setSelectedLocation(location);
     setShowRecords(false); // 重置為顯示基本資訊
+    setCurrentRecordIndex(0); // 重置為第一條記錄
     
     if (location) {
       setIsLoading(true);
@@ -84,6 +97,15 @@ function App() {
     setShowRecords(!showRecords);
   };
 
+  // 導航記錄
+  const navigateRecords = (direction) => {
+    if (direction === 'prev' && currentRecordIndex > 0) {
+      setCurrentRecordIndex(currentRecordIndex - 1);
+    } else if (direction === 'next' && currentRecordIndex < locationRecords.length - 1) {
+      setCurrentRecordIndex(currentRecordIndex + 1);
+    }
+  };
+
   // 關閉側邊欄
   const handleCloseSidePanel = () => {
     setSelectedLocation(null);
@@ -101,6 +123,20 @@ function App() {
     setActiveMenuSection('home');
   };
 
+  // 管理員登入處理
+  const handleAdminLogin = (success) => {
+    setIsAdmin(success);
+    if (success) {
+      console.log('管理員登入成功');
+    }
+  };
+
+  // 管理員登出處理
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+    console.log('管理員已登出');
+  };
+
   return (
     <div className="app-container">
       {/* 搜索欄 - 全屏模式下隱藏 */}
@@ -114,6 +150,8 @@ function App() {
           locations={locations} 
           onLocationSelect={handleLocationSelect}
           selectedLocation={selectedLocation}
+          isAdmin={isAdmin}
+          onLocationAdded={handleLocationAdded}
         />
       )}
       
@@ -128,6 +166,9 @@ function App() {
         onBackToMap={handleBackToMap}
         activeSection={activeMenuSection}
         isFullScreen={isFullScreenContent}
+        isAdmin={isAdmin}
+        onAdminLogin={handleAdminLogin}
+        onAdminLogout={handleAdminLogout}
       />
       
       {/* 根據裝置顯示側邊欄(桌面版)或底部卡片(手機版) - 全屏模式下和沒有選擇地點時隱藏 */}
@@ -138,6 +179,8 @@ function App() {
           isLoading={isLoading}
           showRecords={showRecords}
           toggleRecordsView={toggleRecordsView}
+          currentRecordIndex={currentRecordIndex}
+          navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
           onClose={handleCloseSidePanel}
         />
@@ -150,6 +193,8 @@ function App() {
           isLoading={isLoading}
           showRecords={showRecords}
           toggleRecordsView={toggleRecordsView}
+          currentRecordIndex={currentRecordIndex}
+          navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
           onClose={handleCloseSidePanel}
         />
