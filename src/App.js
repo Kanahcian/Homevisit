@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Map from './components/Map/Map';
 import Search from './components/Search/Search';
@@ -21,6 +21,8 @@ function App() {
   
   // 新增管理員狀態
   const [isAdmin, setIsAdmin] = useState(false);
+  // 地圖實例的 ref
+  const mapInstanceRef = useRef(null);
 
   // 處理響應式設計
   useEffect(() => {
@@ -53,6 +55,35 @@ function App() {
     // 重新載入所有地點
     loadLocations();
   };
+  // 處理地點更新成功
+const handleLocationUpdated = (updatedLocation) => {
+  console.log('地點已更新:', updatedLocation);
+  // 更新地點列表中的對應項目
+  setLocations(prevLocations => 
+    prevLocations.map(loc => 
+      loc.id === updatedLocation.id ? updatedLocation : loc
+    )
+  );
+  // 如果當前選中的是被更新的地點，也要更新選中狀態
+  if (selectedLocation && selectedLocation.id === updatedLocation.id) {
+    setSelectedLocation(updatedLocation);
+  }
+};
+
+// 處理地點刪除成功
+const handleLocationDeleted = (deletedLocationId) => {
+  console.log('地點已刪除, ID:', deletedLocationId);
+  // 從地點列表中移除被刪除的地點
+  setLocations(prevLocations => 
+    prevLocations.filter(loc => loc.id !== deletedLocationId)
+  );
+  // 如果當前選中的地點被刪除，清除選中狀態
+  if (selectedLocation && selectedLocation.id === deletedLocationId) {
+    setSelectedLocation(null);
+    setLocationRecords([]);
+    setShowRecords(false);
+  }
+};
 
   // 選擇地點時加載相關記錄
   const handleLocationSelect = async (location) => {
@@ -152,6 +183,7 @@ function App() {
           selectedLocation={selectedLocation}
           isAdmin={isAdmin}
           onLocationAdded={handleLocationAdded}
+          mapInstanceRef={mapInstanceRef}
         />
       )}
       
@@ -183,6 +215,10 @@ function App() {
           navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
           onClose={handleCloseSidePanel}
+          isAdmin={isAdmin}
+          onLocationUpdated={handleLocationUpdated}
+          onLocationDeleted={handleLocationDeleted}
+          mapInstance={mapInstanceRef.current}
         />
       )}
       
@@ -197,6 +233,10 @@ function App() {
           navigateRecords={navigateRecords}
           isActive={!!selectedLocation}
           onClose={handleCloseSidePanel}
+          isAdmin={isAdmin}
+          onLocationUpdated={handleLocationUpdated}
+          onLocationDeleted={handleLocationDeleted}
+          mapInstance={mapInstanceRef.current}
         />
       )}
     </div>

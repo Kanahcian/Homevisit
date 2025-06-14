@@ -321,12 +321,95 @@ export const findVillagerIdByName = async (name) => {
   }
 };
 
+// 更新地點
+export const updateLocation = async (locationId, locationData) => {
+  try {
+    console.log(`正在更新地點 ID: ${locationId}`, locationData);
+    
+    const response = await fetch(`${API_BASE_URL}/api/location/${locationId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(locationData)
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        }
+      } catch (e) {
+        // 如果無法解析錯誤響應，使用默認錯誤訊息
+      }
+      throw new Error(errorMessage);
+    }
+    
+    const data = await response.json();
+    
+    if (data.status === "success") {
+      console.log('地點更新成功:', data.data);
+      return data.data;
+    } else {
+      console.error("更新地點失敗", data);
+      throw new Error(data.message || '更新地點失敗');
+    }
+  } catch (error) {
+    console.error("更新地點 API 請求錯誤:", error);
+    throw error;
+  }
+};
+
+// 刪除地點
+export const deleteLocation = async (locationId) => {
+  try {
+    console.log(`正在刪除地點 ID: ${locationId}`);
+    
+    const response = await fetch(`${API_BASE_URL}/api/location/${locationId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    
+    if (!response.ok) {
+      let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        }
+      } catch (e) {
+        // 如果無法解析錯誤響應，使用默認錯誤訊息
+      }
+      throw new Error(errorMessage);
+    }
+    
+    const data = await response.json();
+    
+    if (data.status === "success") {
+      console.log('地點刪除成功:', data.message);
+      return data;
+    } else {
+      console.error("刪除地點失敗", data);
+      throw new Error(data.message || '刪除地點失敗');
+    }
+  } catch (error) {
+    console.error("刪除地點 API 請求錯誤:", error);
+    throw error;
+  }
+};
+
 export default {
   fetchLocations,
   fetchRecords,
   fetchVillagerDetails,
   findVillagerIdByName,
   addLocation,
+  updateLocation,  // 新增
+  deleteLocation,  // 新增
   convertGoogleDriveLink,
   formatDate
 };

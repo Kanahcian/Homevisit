@@ -3,9 +3,9 @@ import './Map.css';
 import L from 'leaflet';
 import AddLocationModal from './AddLocationModal';
 
-const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocationAdded }) => {
+const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocationAdded, mapInstanceRef }) => {
   const mapRef = useRef(null);
-  const mapInstanceRef = useRef(null);
+  const mapInstanceRef_internal = useRef(null);
   const markersRef = useRef([]);
   const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
   const layersRef = useRef([]);
@@ -56,7 +56,12 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     switchButton.addTo(map);
     
     // 保存地圖實例
-    mapInstanceRef.current = map;
+    mapInstanceRef_internal.current = map;
+
+    // 如果父組件傳遞了 mapInstanceRef，也設置它
+    if (mapInstanceRef) {
+      mapInstanceRef.current = map;
+    }
     
     // 清理函數
     return () => {
@@ -208,7 +213,7 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
         <AddLocationModal
           onLocationAdded={handleLocationAdded}
           onClose={handleCloseModal}
-          mapInstance={mapInstanceRef.current}
+          mapInstance={mapInstanceRef_internal.current}
         />
       )}
     </>

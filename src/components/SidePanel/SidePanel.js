@@ -3,6 +3,8 @@ import './SidePanel.css';
 import '../LoadingAnimation.css'; 
 import LocationInfo from '../LocationInfo/LocationInfo';
 import RecordDetails from '../RecordDetails/RecordDetails';
+import EditLocationModal from '../Map/EditLocationModal';
+import DeleteConfirmModal from '../Map/DeleteConfirmModal';
 
 const SidePanel = ({ 
   location, 
@@ -11,11 +13,17 @@ const SidePanel = ({
   showRecords, 
   toggleRecordsView,
   isActive,
-  onClose
+  onClose,
+  isAdmin,
+  onLocationUpdated,
+  onLocationDeleted,
+  mapInstance
 }) => {
   // 管理每個年份的展開/收起狀態
   const [expandedYears, setExpandedYears] = useState(new Set());
-  
+  // 管理員模態框狀態
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   // 按年份分組記錄
   const recordsByYear = useMemo(() => {
     if (!records || records.length === 0) return {};
@@ -98,7 +106,28 @@ const SidePanel = ({
       <div className="sidebar-close" onClick={onClose || (() => window.history.back())}>&times;</div>
       <div className="location-details">
         <h2 id="location-name">{location ? location.name : '地點名稱'}</h2>
-
+        {/* 管理員按鈕區域 */}
+        {isAdmin && location && !isLoading && (
+          <div className="admin-buttons">
+            <button 
+              className="admin-btn edit-btn"
+              onClick={() => setShowEditModal(true)}
+              title="編輯地點"
+            >
+              <i className="fas fa-edit"></i>
+              編輯地點
+            </button>
+            <button 
+              className="admin-btn delete-btn"
+              onClick={() => setShowDeleteModal(true)}
+              title="刪除地點"
+            >
+              <i className="fas fa-trash"></i>
+              刪除地點
+            </button>
+          </div>
+        )}
+        
         {/* 紀錄加載指示器 - 在加載狀態下顯示 */}
         {isLoading && (
           <div id="records-loading-indicator" className="records-loading">
@@ -169,6 +198,30 @@ const SidePanel = ({
           </div>
         )}
       </div>
+      {/* 編輯地點模態框 */}
+        {showEditModal && location && (
+          <EditLocationModal
+            location={location}
+            onLocationUpdated={(updatedLocation) => {
+              setShowEditModal(false);
+              if (onLocationUpdated) onLocationUpdated(updatedLocation);
+            }}
+            onClose={() => setShowEditModal(false)}
+            mapInstance={mapInstance}
+          />
+        )}
+
+        {/* 刪除確認模態框 */}
+        {showDeleteModal && location && (
+          <DeleteConfirmModal
+            location={location}
+            onLocationDeleted={(locationId) => {
+              setShowDeleteModal(false);
+              if (onLocationDeleted) onLocationDeleted(locationId);
+            }}
+            onClose={() => setShowDeleteModal(false)}
+          />
+        )}
     </div>
   );
 };
