@@ -7,13 +7,19 @@ import AddLocationModal from './AddLocationModal';
 // 📍 ICON 配置區域 - 在這裡設定所有 icon 路徑
 // ===========================================
 const MARKER_ICONS = {
-  default: '/assets/images/pin.png',        // 預設標記
-  church: '/assets/images/church.png',      // 教會標記
-  festival: '/assets/images/home.png',      // 射耳祭住宿標記
-  village_evening: '/assets/images/firewood.png', // 村晚系列標記
-  clan: '/assets/images/family.png',        // 江氏宗親會標記
-  farm: '/assets/images/sprout.png',        // 農訪標記
-  defense: '/assets/images/shield.png'      // 防身術標記
+  default: `${process.env.PUBLIC_URL}/assets/images/pin.png`,        // 預設標記
+  church: `${process.env.PUBLIC_URL}/assets/images/church.png`,      // 教會標記
+  festival: `${process.env.PUBLIC_URL}/assets/images/home.png`,      // 射耳祭住宿標記
+  
+  // 村晚系列 - 各自獨立的 icon
+  village_karaoke: `${process.env.PUBLIC_URL}/assets/images/karaoke.png`,  // 村晚卡拉ok機 (請準備對應檔案)
+  village_firewood: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,     // 村晚木柴
+  village_grill: `${process.env.PUBLIC_URL}/assets/images/barbeque.png`,      // 村晚烤爐 (請準備對應檔案)
+  village_evening: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,      // 其他村晚系列 (預設用木柴)
+  
+  clan: `${process.env.PUBLIC_URL}/assets/images/family.png`,        // 江氏宗親會標記
+  farm: `${process.env.PUBLIC_URL}/assets/images/sprout.png`,        // 農訪標記
+  defense: `${process.env.PUBLIC_URL}/assets/images/shield.png`      // 防身術標記
 };
 
 // ===========================================
@@ -45,11 +51,31 @@ const extractAllTags = (tagArray) => {
 const determineMarkerType = (tagArray) => {
   const allTags = extractAllTags(tagArray);
   
-  // 優先級 1: 村晚系列（最高優先級）
-  const villageEveningTags = ['村晚卡拉ok機', '村晚木柴', '村晚烤爐'];
+  // 優先級 1: 村晚系列（最高優先級）- 細分為3個子類別
+  
+  // 1a. 村晚卡拉ok機
   if (allTags.some(tag => 
-    villageEveningTags.includes(tag) || tag.includes('村晚')
+    tag.includes('村晚卡拉ok機') || tag.includes('卡拉ok機') || tag.includes('卡拉OK機')
   )) {
+    return 'village_karaoke';
+  }
+  
+  // 1b. 村晚木柴
+  if (allTags.some(tag => 
+    tag.includes('村晚木柴') || (tag.includes('木柴') && tag.includes('村晚'))
+  )) {
+    return 'village_firewood';
+  }
+  
+  // 1c. 村晚烤爐
+  if (allTags.some(tag => 
+    tag.includes('村晚烤爐') || (tag.includes('烤爐') && tag.includes('村晚'))
+  )) {
+    return 'village_grill';
+  }
+  
+  // 1d. 其他村晚相關標籤
+  if (allTags.some(tag => tag.includes('村晚'))) {
     return 'village_evening';
   }
   
@@ -179,6 +205,14 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
       if (!isNaN(lat) && !isNaN(lon)) {
         // 根據標籤確定 marker 類型
         const markerType = determineMarkerType(loc.tag);
+        
+        // 除錯：檢查標籤分類是否正確
+        if (loc.tag && loc.tag.length > 0) {
+          console.log(`🏷️ 地點: ${loc.name}`);
+          console.log(`   原始標籤:`, loc.tag);
+          console.log(`   選擇的類型: ${markerType}`);
+          console.log(`   使用的 icon: ${MARKER_ICONS[markerType]}`);
+        }
         
         // 創建對應的 icon
         const customIcon = createCustomIcon(markerType);
@@ -311,7 +345,7 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
           onClick={handleLayerSwitch}
           title="切換地圖圖層"
         >
-          <img src="/assets/images/layers.png" className="map-switch-icon" alt="切換圖層" />
+          <img src={`${process.env.PUBLIC_URL}/assets/images/layers.png`} className="map-switch-icon" alt="切換圖層" />
         </button>
 
         {/* 定位按鈕 */}

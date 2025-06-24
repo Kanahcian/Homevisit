@@ -16,7 +16,7 @@ const LocationInfo = ({ location, hideCoordinates }) => {
             className="location-photo"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = '/assets/images/photo-error.png';
+              e.target.src = `${process.env.PUBLIC_URL}/assets/images/photo-error.png`;
               console.error("地點照片載入失敗:", location.photo);
             }}
           />
