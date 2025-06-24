@@ -1,11 +1,28 @@
 import React from 'react';
 import './LocationInfo.css';
+import { convertGoogleDriveLink } from '../../utils/helpers';
 
 const LocationInfo = ({ location, hideCoordinates }) => {
   if (!location) return null;
 
   return (
     <div id="location-info" className="location-info">
+      {/* 地點照片 */}
+      {location.photo && (
+        <div className="location-photo-container">
+          <img 
+            src={convertGoogleDriveLink(location.photo)}
+            alt={`${location.name} 的照片`}
+            className="location-photo"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '/assets/images/photo-error.png';
+              console.error("地點照片載入失敗:", location.photo);
+            }}
+          />
+        </div>
+      )}
+      
       {/* 地點簡介 */}
       {location.brief_description && (
         <div className="location-brief" id="location-brief">
@@ -16,8 +33,42 @@ const LocationInfo = ({ location, hideCoordinates }) => {
         </div>
       )}
       
-      {/* 這裡可以添加更多地點相關資訊，但隱藏座標 */}
-      {!hideCoordinates && (
+      {/* 地點標籤 */}
+      {location.tag && location.tag.length > 0 && (
+        <div className="location-additional-info">
+          <div className="info-item">
+            <div className="info-item-title">
+              <i className="fas fa-tags"></i>
+              <span>標籤</span>
+            </div>
+            <div className="info-item-content">
+              <div className="location-tags">
+                {location.tag.map((tag, index) => (
+                  <span key={index} className="location-tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* 地址信息 */}
+      {location.address && (
+        <div className="location-additional-info">
+          <div className="info-item">
+            <div className="info-item-title">
+              <i className="fas fa-map-pin"></i>
+              <span>地址</span>
+            </div>
+            <div className="info-item-content">
+              {location.address}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* 座標信息 - 根據 hideCoordinates 參數決定是否顯示 */}
+      {!hideCoordinates && location.latitude && location.longitude && (
         <div className="location-additional-info">
           <div className="info-item">
             <div className="info-item-title">
@@ -25,7 +76,10 @@ const LocationInfo = ({ location, hideCoordinates }) => {
               <span>位置座標</span>
             </div>
             <div className="info-item-content">
-              {location.latitude}, {location.longitude}
+              <div className="coordinates">
+                <span>緯度: {location.latitude}</span>
+                <span>經度: {location.longitude}</span>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,28 @@
 /* LocationInfo.css - 地點基本信息樣式 */
 
+/* 地點照片容器 */
+.location-photo-container {
+  margin-bottom: 20px;
+  text-align: center;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.location-photo {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.location-photo:hover {
+  transform: scale(1.02);
+}
+
 /* 地點簡介 */
 .location-brief {
     margin: 10px 0 15px 0;
@@ -88,6 +111,7 @@
   /* 座標顯示 */
   .coordinates {
     display: flex;
+    flex-direction: column;
     background-color: #f8f9fa;
     padding: 8px 12px;
     border-radius: 6px;
@@ -95,17 +119,19 @@
     font-family: monospace;
     color: #555;
     font-size: 14px;
+    gap: 4px;
   }
   
   .coordinates span {
-    margin-right: 10px;
+    display: block;
   }
   
   /* 地點標籤 */
   .location-tags {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 12px;
+    margin-top: 8px;
+    gap: 6px;
   }
   
   .location-tag {
@@ -114,13 +140,21 @@
     color: #4a8fe7;
     border-radius: 15px;
     padding: 4px 10px;
-    margin-right: 6px;
-    margin-bottom: 6px;
     font-size: 12px;
+    border: 1px solid #d0e0ff;
+    white-space: nowrap;
   }
   
   /* 響應式調整 */
   @media screen and (max-width: 768px) {
+    .location-photo-container {
+      margin-bottom: 15px;
+    }
+    
+    .location-photo {
+      max-height: 200px;
+    }
+    
     .info-item {
       padding: 10px;
     }
@@ -128,4 +162,47 @@
     .info-item-content {
       padding-left: 20px;
     }
+    
+    .coordinates {
+      font-size: 13px;
+    }
+    
+    .location-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+    }
+  }
+
+  /* 照片放大效果（可選） */
+  .location-photo-container {
+    position: relative;
+  }
+  
+  .location-photo-container::after {
+    content: '\f065'; /* Font Awesome 放大鏡圖標 */
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 8px;
+    border-radius: 50%;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  
+  .location-photo-container:hover::after {
+    opacity: 1;
+  }
+
+  /* 照片錯誤狀態 */
+  .location-photo[src*="photo-error"] {
+    background-color: #f8f9fa;
+    border: 2px dashed #ddd;
+    padding: 20px;
+    color: #999;
   }
