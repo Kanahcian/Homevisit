@@ -3,6 +3,111 @@ import './Map.css';
 import L from 'leaflet';
 import AddLocationModal from './AddLocationModal';
 
+// ===========================================
+// 📍 ICON 配置區域 - 在這裡設定所有 icon 路徑
+// ===========================================
+const MARKER_ICONS = {
+  default: '/assets/images/pin.png',        // 預設標記 (請替換為實際路徑)
+  church: '/assets/images/church.png', // 教會標記 (請替換為實際路徑)
+  festival: '/assets/images/home.png', // 射耳祭住宿標記 (請替換為實際路徑)
+  village_evening: '/assets/images/firewood.png', // 村晚系列標記 (請替換為實際路徑)
+  clan: '/assets/images/family.png',     // 江氏宗親會標記 (請替換為實際路徑)
+  farm: '/assets/images/sprout.png',     // 農訪標記 (請替換為實際路徑)
+  defense: '/assets/images/shield.png' // 防身術標記 (請替換為實際路徑)
+};
+
+// ===========================================
+// 🏷️ 標籤分類與優先級系統
+// ===========================================
+
+/**
+ * 從地點標籤陣列中提取所有個別標籤
+ * @param {Array} tagArray - 標籤陣列，可能包含逗號分隔的字串
+ * @returns {Array} 所有個別標籤的陣列
+ */
+const extractAllTags = (tagArray) => {
+  if (!tagArray || !Array.isArray(tagArray)) return [];
+  
+  return tagArray
+    .flatMap(tagString => 
+      typeof tagString === 'string' 
+        ? tagString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+        : []
+    )
+    .filter((tag, index, array) => array.indexOf(tag) === index); // 去除重複
+};
+
+/**
+ * 根據標籤確定 marker 類型（按優先級）
+ * @param {Array} tagArray - 地點的標籤陣列
+ * @returns {string} marker 類型
+ */
+const determineMarkerType = (tagArray) => {
+  const allTags = extractAllTags(tagArray);
+  
+  // 優先級 1: 村晚系列（最高優先級）
+  const villageEveningTags = ['村晚卡拉ok機', '村晚木柴', '村晚烤爐'];
+  if (allTags.some(tag => 
+    villageEveningTags.includes(tag) || tag.includes('村晚')
+  )) {
+    return 'village_evening';
+  }
+  
+  // 優先級 2: 教會
+  if (allTags.some(tag => 
+    tag.includes('教會') || tag.includes('教堂') || tag.includes('長老教會')
+  )) {
+    return 'church';
+  }
+  
+  // 優先級 3: 射耳祭住宿
+  if (allTags.some(tag => 
+    tag.includes('射耳祭住宿') || tag.includes('射耳祭')
+  )) {
+    return 'festival';
+  }
+  
+  // 優先級 4: 其他特定標籤
+  if (allTags.some(tag => 
+    tag.includes('江氏宗親會') || tag.includes('宗親會')
+  )) {
+    return 'clan';
+  }
+  
+  if (allTags.some(tag => 
+    tag.includes('農訪') || tag.includes('農業')
+  )) {
+    return 'farm';
+  }
+  
+  if (allTags.some(tag => 
+    tag.includes('防身術') || tag.includes('防身')
+  )) {
+    return 'defense';
+  }
+  
+  // 預設
+  return 'default';
+};
+
+/**
+ * 創建自定義 Leaflet icon
+ * @param {string} iconType - icon 類型
+ * @returns {L.Icon} Leaflet icon 實例
+ */
+const createCustomIcon = (iconType) => {
+  return L.icon({
+    iconUrl: MARKER_ICONS[iconType] || MARKER_ICONS.default,
+    iconSize: [35, 35],
+    iconAnchor: [17, 35],
+    popupAnchor: [0, -35]
+  });
+};
+
+// ===========================================
+// 🗺️ Map 組件主體
+// ===========================================
+
 const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocationAdded, mapInstanceRef }) => {
   const mapRef = useRef(null);
   const mapInstanceRef_internal = useRef(null);
@@ -16,7 +121,6 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     if (!mapRef.current) return;
     
     // 設置地圖
-    const zoomLevel = window.innerWidth < 768 ? 22 : 22;
     const map = L.map(mapRef.current, {
       zoomControl: false
     }).setView([23.00116, 121.1308733], 20);
@@ -49,11 +153,11 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     
     // 清理函數
     return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+      if (mapInstanceRef_internal.current) {
+        mapInstanceRef_internal.current.remove();
       }
     };
-  }, []);
+  }, [currentLayerIndex, mapInstanceRef]);
   
   // 當地點數據更新時添加標記
   useEffect(() => {
@@ -65,30 +169,39 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     });
     markersRef.current = [];
     
-    // 創建自定義圖標
-    const customIcon = L.icon({
-      iconUrl: '/assets/images/pin.png',
-      iconSize: [35, 35],
-      iconAnchor: [16, 40],
-      popupAnchor: [0, -40]
-    });
-    
     // 添加新標記
     locations.forEach(loc => {
       const lat = parseFloat(loc.latitude);
       const lon = parseFloat(loc.longitude);
       
       if (!isNaN(lat) && !isNaN(lon)) {
+        // 根據標籤確定 marker 類型
+        const markerType = determineMarkerType(loc.tag);
+        
+        // 創建對應的 icon
+        const customIcon = createCustomIcon(markerType);
+        
+        // 建立標記
         const marker = L.marker([lat, lon], { icon: customIcon })
           .addTo(mapInstanceRef.current)
           .on('click', () => {
             onLocationSelect(loc);
           });
         
+        // 添加彈出窗口（顯示地點名稱和主要標籤）
+        const allTags = extractAllTags(loc.tag);
+        const popupContent = `
+          <div style="text-align: center;">
+            <strong>${loc.name}</strong>
+            ${allTags.length > 0 ? `<br><small style="color: #666;">${allTags.slice(0, 3).join(', ')}${allTags.length > 3 ? '...' : ''}</small>` : ''}
+          </div>
+        `;
+        marker.bindPopup(popupContent);
+        
         markersRef.current.push(marker);
       }
     });
-  }, [locations, onLocationSelect]);
+  }, [locations, onLocationSelect, mapInstanceRef]);
   
   // 當選中的地點變化時，將地圖居中到該地點
   useEffect(() => {
@@ -100,7 +213,7 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     if (!isNaN(lat) && !isNaN(lon)) {
       mapInstanceRef.current.setView([lat, lon], 19);
     }
-  }, [selectedLocation]);
+  }, [selectedLocation, mapInstanceRef]);
   
   // 處理用戶定位
   const handleLocateUser = () => {

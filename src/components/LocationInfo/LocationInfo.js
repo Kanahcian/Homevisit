@@ -34,23 +34,34 @@ const LocationInfo = ({ location, hideCoordinates }) => {
       )}
       
       {/* 地點標籤 */}
-      {location.tag && location.tag.length > 0 && (
-        <div className="location-additional-info">
-          <div className="info-item">
-            <div className="info-item-title">
-              <i className="fas fa-tags"></i>
-              <span>標籤</span>
-            </div>
-            <div className="info-item-content">
-              <div className="location-tags">
-                {location.tag.map((tag, index) => (
-                  <span key={index} className="location-tag">{tag}</span>
-                ))}
+      {location.tag && location.tag.length > 0 && (() => {
+        // 處理標籤：將陣列中的每個元素以逗號分割，然後去重
+        const allTags = location.tag
+          .flatMap(tagString => 
+            typeof tagString === 'string' 
+              ? tagString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+              : []
+          )
+          .filter((tag, index, array) => array.indexOf(tag) === index); // 去除重複標籤
+        
+        return allTags.length > 0 ? (
+          <div className="location-additional-info">
+            <div className="info-item">
+              <div className="info-item-title">
+                <i className="fas fa-tags"></i>
+                <span>標籤</span>
+              </div>
+              <div className="info-item-content">
+                <div className="location-tags">
+                  {allTags.map((tag, index) => (
+                    <span key={index} className="location-tag">{tag}</span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        ) : null;
+      })()}
       
       {/* 地址信息 */}
       {location.address && (
