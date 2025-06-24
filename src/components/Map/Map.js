@@ -7,13 +7,13 @@ import AddLocationModal from './AddLocationModal';
 // 📍 ICON 配置區域 - 在這裡設定所有 icon 路徑
 // ===========================================
 const MARKER_ICONS = {
-  default: '/assets/images/pin.png',        // 預設標記 (請替換為實際路徑)
-  church: '/assets/images/church.png', // 教會標記 (請替換為實際路徑)
-  festival: '/assets/images/home.png', // 射耳祭住宿標記 (請替換為實際路徑)
-  village_evening: '/assets/images/firewood.png', // 村晚系列標記 (請替換為實際路徑)
-  clan: '/assets/images/family.png',     // 江氏宗親會標記 (請替換為實際路徑)
-  farm: '/assets/images/sprout.png',     // 農訪標記 (請替換為實際路徑)
-  defense: '/assets/images/shield.png' // 防身術標記 (請替換為實際路徑)
+  default: '/assets/images/pin.png',        // 預設標記
+  church: '/assets/images/church.png',      // 教會標記
+  festival: '/assets/images/home.png',      // 射耳祭住宿標記
+  village_evening: '/assets/images/firewood.png', // 村晚系列標記
+  clan: '/assets/images/family.png',        // 江氏宗親會標記
+  farm: '/assets/images/sprout.png',        // 農訪標記
+  defense: '/assets/images/shield.png'      // 防身術標記
 };
 
 // ===========================================
@@ -96,8 +96,10 @@ const determineMarkerType = (tagArray) => {
  * @returns {L.Icon} Leaflet icon 實例
  */
 const createCustomIcon = (iconType) => {
+  const iconUrl = MARKER_ICONS[iconType] || MARKER_ICONS.default;
+  
   return L.icon({
-    iconUrl: MARKER_ICONS[iconType] || MARKER_ICONS.default,
+    iconUrl: iconUrl,
     iconSize: [35, 35],
     iconAnchor: [17, 35],
     popupAnchor: [0, -35]
