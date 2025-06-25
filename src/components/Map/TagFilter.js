@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import './TagFilter.css';
 
 // 標籤分類配置
@@ -82,14 +82,27 @@ const extractAllTags = (tagArray) => {
 const TagFilter = ({ locations, onFilterChange, selectedFilter, isFullScreen }) => {
   // 過濾出有地點的分類
   const availableCategories = useMemo(() => {
-    return TAG_CATEGORIES.filter(category => {
+    const categories = TAG_CATEGORIES.filter(category => {
       if (category.id === 'all') return true;
       
-      return locations.some(location => {
+      const hasLocations = locations.some(location => {
         const allTags = extractAllTags(location.tag);
         return category.matchFunction(allTags);
       });
+      
+      // 調試：確保村晚標籤被正確識別
+      if (category.id === 'village_evening') {
+        console.log('村晚標籤檢查:', {
+          hasLocations,
+          sampleTags: locations.slice(0, 3).map(loc => extractAllTags(loc.tag))
+        });
+      }
+      
+      return hasLocations;
     });
+    
+    console.log('可用標籤類別:', categories.map(c => c.name));
+    return categories;
   }, [locations]);
 
   // 處理標籤點擊

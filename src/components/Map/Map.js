@@ -204,7 +204,7 @@ const Map = ({
     ];
     
     // 設定初始底圖
-    layers[currentLayerIndex].addTo(map);
+    layers[0].addTo(map); // 總是從第一個圖層開始
     layersRef.current = layers;
     
     // 保存地圖實例
@@ -218,7 +218,7 @@ const Map = ({
         mapInstanceRef_internal.current.remove();
       }
     };
-  }, [currentLayerIndex, mapInstanceRef]);
+  }, [mapInstanceRef]); // 移除 currentLayerIndex 依賴，避免重新初始化
   
   // 當地點數據或篩選條件更新時添加/更新標記
   useEffect(() => {
@@ -241,8 +241,37 @@ const Map = ({
       const lon = parseFloat(loc.longitude);
       
       if (!isNaN(lat) && !isNaN(lon)) {
-        // 根據標籤確定 marker 類型
-        const markerType = determineMarkerType(loc.tag);
+        // 根據篩選狀態決定 marker 類型
+        let markerType;
+        
+        if (activeFilter === 'all') {
+          // 顯示全部時，根據標籤確定具體的 marker 類型
+          markerType = determineMarkerType(loc.tag);
+        } else if (activeFilter === 'village_evening') {
+          // 村晚篩選時，保持細分的 marker 類型
+          markerType = determineMarkerType(loc.tag);
+        } else {
+          // 其他篩選時，根據篩選類型統一顯示對應的 marker
+          switch (activeFilter) {
+            case 'church':
+              markerType = 'church';
+              break;
+            case 'festival':
+              markerType = 'festival';
+              break;
+            case 'clan':
+              markerType = 'clan';
+              break;
+            case 'farm':
+              markerType = 'farm';
+              break;
+            case 'defense':
+              markerType = 'defense';
+              break;
+            default:
+              markerType = 'default';
+          }
+        }
         
         // 創建對應的 icon
         const customIcon = createCustomIcon(markerType);
@@ -254,22 +283,12 @@ const Map = ({
             onLocationSelect(loc);
           });
         
-        // 為篩選狀態下的標記添加強調效果
-        if (activeFilter !== 'all') {
-          const element = marker.getElement();
-          if (element) {
-            element.style.animation = 'markerPulse 2s infinite';
-            element.classList.add('marker-highlighted');
-          }
-        }
-        
-        // 添加彈出窗口
+        // 添加彈出窗口（無論是否篩選都可以看到基本信息）
         const allTags = extractAllTags(loc.tag);
         const popupContent = `
           <div style="text-align: center;">
             <strong>${loc.name}</strong>
             ${allTags.length > 0 ? `<br><small style="color: #666;">${allTags.slice(0, 3).join(', ')}${allTags.length > 3 ? '...' : ''}</small>` : ''}
-            ${activeFilter !== 'all' ? '<br><span style="color: #1a73e8; font-weight: bold;">✓ 符合篩選</span>' : ''}
           </div>
         `;
         marker.bindPopup(popupContent);
@@ -277,6 +296,7 @@ const Map = ({
         markersRef.current.push(marker);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locations, onLocationSelect, activeFilter]);
   
   // 當選中的地點變化時，將地圖居中到該地點
@@ -289,23 +309,13 @@ const Map = ({
     if (!isNaN(lat) && !isNaN(lon)) {
       mapInstanceRef.current.setView([lat, lon], 19);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLocation]);
   
   // 處理標籤篩選變化
   const handleFilterChange = (filterType) => {
     setActiveFilter(filterType);
-    
-    // 如果篩選到特定類型，可以自動調整地圖視角到顯示所有符合條件的標記
-    if (filterType !== 'all') {
-      const filteredLocations = locations.filter(loc => matchesFilter(loc, filterType));
-      if (filteredLocations.length > 0 && mapInstanceRef.current) {
-        // 計算所有符合條件地點的邊界
-        const bounds = L.latLngBounds(
-          filteredLocations.map(loc => [parseFloat(loc.latitude), parseFloat(loc.longitude)])
-        );
-        mapInstanceRef.current.fitBounds(bounds, { padding: [20, 20] });
-      }
-    }
+    // 移除自動調整地圖視角的功能，只進行篩選
   };
   
   // 處理用戶定位
@@ -352,11 +362,18 @@ const Map = ({
 
   // 處理地圖圖層切換
   const handleLayerSwitch = () => {
-    if (mapInstanceRef.current) {
+    if (mapInstanceRef.current && layersRef.current.length > 0) {
+      // 移除當前圖層
       mapInstanceRef.current.removeLayer(layersRef.current[currentLayerIndex]);
+      
+      // 計算下一個圖層索引
       const nextIndex = (currentLayerIndex + 1) % layersRef.current.length;
-      setCurrentLayerIndex(nextIndex);
+      
+      // 添加新圖層
       mapInstanceRef.current.addLayer(layersRef.current[nextIndex]);
+      
+      // 更新狀態
+      setCurrentLayerIndex(nextIndex);
     }
   };
 
