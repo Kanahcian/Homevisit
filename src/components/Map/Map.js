@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './Map.css';
 import L from 'leaflet';
 import AddLocationModal from './AddLocationModal';
+import TagFilter from './TagFilter'; // 新增：導入標籤篩選器
 
 // ===========================================
 // 📍 ICON 配置區域 - 在這裡設定所有 icon 路徑
@@ -12,10 +13,10 @@ const MARKER_ICONS = {
   festival: `${process.env.PUBLIC_URL}/assets/images/home.png`,      // 射耳祭住宿標記
   
   // 村晚系列 - 各自獨立的 icon
-  village_karaoke: `${process.env.PUBLIC_URL}/assets/images/karaoke.png`,  // 村晚卡拉ok機 (請準備對應檔案)
+  village_karaoke: `${process.env.PUBLIC_URL}/assets/images/karaoke.png`,  // 村晚卡拉ok機
   village_firewood: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,     // 村晚木柴
-  village_grill: `${process.env.PUBLIC_URL}/assets/images/barbeque.png`,      // 村晚烤爐 (請準備對應檔案)
-  village_evening: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,      // 其他村晚系列 (預設用木柴)
+  village_grill: `${process.env.PUBLIC_URL}/assets/images/barbeque.png`,      // 村晚烤爐
+  village_evening: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,      // 其他村晚系列
   
   clan: `${process.env.PUBLIC_URL}/assets/images/family.png`,        // 江氏宗親會標記
   farm: `${process.env.PUBLIC_URL}/assets/images/sprout.png`,        // 農訪標記
@@ -28,8 +29,6 @@ const MARKER_ICONS = {
 
 /**
  * 從地點標籤陣列中提取所有個別標籤
- * @param {Array} tagArray - 標籤陣列，可能包含逗號分隔的字串
- * @returns {Array} 所有個別標籤的陣列
  */
 const extractAllTags = (tagArray) => {
   if (!tagArray || !Array.isArray(tagArray)) return [];
@@ -40,41 +39,34 @@ const extractAllTags = (tagArray) => {
         ? tagString.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
         : []
     )
-    .filter((tag, index, array) => array.indexOf(tag) === index); // 去除重複
+    .filter((tag, index, array) => array.indexOf(tag) === index);
 };
 
 /**
  * 根據標籤確定 marker 類型（按優先級）
- * @param {Array} tagArray - 地點的標籤陣列
- * @returns {string} marker 類型
  */
 const determineMarkerType = (tagArray) => {
   const allTags = extractAllTags(tagArray);
   
-  // 優先級 1: 村晚系列（最高優先級）- 細分為3個子類別
-  
-  // 1a. 村晚卡拉ok機
+  // 優先級 1: 村晚系列（最高優先級）
   if (allTags.some(tag => 
     tag.includes('村晚卡拉ok機') || tag.includes('卡拉ok機') || tag.includes('卡拉OK機')
   )) {
     return 'village_karaoke';
   }
   
-  // 1b. 村晚木柴
   if (allTags.some(tag => 
     tag.includes('村晚木柴') || (tag.includes('木柴') && tag.includes('村晚'))
   )) {
     return 'village_firewood';
   }
   
-  // 1c. 村晚烤爐
   if (allTags.some(tag => 
     tag.includes('村晚烤爐') || (tag.includes('烤爐') && tag.includes('村晚'))
   )) {
     return 'village_grill';
   }
   
-  // 1d. 其他村晚相關標籤
   if (allTags.some(tag => tag.includes('村晚'))) {
     return 'village_evening';
   }
@@ -112,14 +104,47 @@ const determineMarkerType = (tagArray) => {
     return 'defense';
   }
   
-  // 預設
   return 'default';
 };
 
 /**
+ * 檢查地點是否符合篩選條件
+ */
+const matchesFilter = (location, filterType) => {
+  if (filterType === 'all') return true;
+  
+  const allTags = extractAllTags(location.tag);
+  
+  switch (filterType) {
+    case 'village_evening':
+      return allTags.some(tag => tag.includes('村晚'));
+    case 'church':
+      return allTags.some(tag => 
+        tag.includes('教會') || tag.includes('教堂') || tag.includes('長老教會')
+      );
+    case 'festival':
+      return allTags.some(tag => 
+        tag.includes('射耳祭住宿') || tag.includes('射耳祭')
+      );
+    case 'clan':
+      return allTags.some(tag => 
+        tag.includes('江氏宗親會') || tag.includes('宗親會')
+      );
+    case 'farm':
+      return allTags.some(tag => 
+        tag.includes('農訪') || tag.includes('農業')
+      );
+    case 'defense':
+      return allTags.some(tag => 
+        tag.includes('防身術') || tag.includes('防身')
+      );
+    default:
+      return true;
+  }
+};
+
+/**
  * 創建自定義 Leaflet icon
- * @param {string} iconType - icon 類型
- * @returns {L.Icon} Leaflet icon 實例
  */
 const createCustomIcon = (iconType) => {
   const iconUrl = MARKER_ICONS[iconType] || MARKER_ICONS.default;
@@ -136,13 +161,24 @@ const createCustomIcon = (iconType) => {
 // 🗺️ Map 組件主體
 // ===========================================
 
-const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocationAdded, mapInstanceRef }) => {
+const Map = ({ 
+  locations, 
+  onLocationSelect, 
+  selectedLocation, 
+  isAdmin, 
+  onLocationAdded, 
+  mapInstanceRef,
+  isFullScreen // 新增：是否為全屏模式
+}) => {
   const mapRef = useRef(null);
   const mapInstanceRef_internal = useRef(null);
   const markersRef = useRef([]);
   const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
   const layersRef = useRef([]);
   const [showAddLocationModal, setShowAddLocationModal] = useState(false);
+  
+  // 新增：標籤篩選狀態
+  const [activeFilter, setActiveFilter] = useState('all');
 
   // 初始化地圖
   useEffect(() => {
@@ -173,13 +209,10 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     
     // 保存地圖實例
     mapInstanceRef_internal.current = map;
-
-    // 如果父組件傳遞了 mapInstanceRef，也設置它
     if (mapInstanceRef) {
       mapInstanceRef.current = map;
     }
     
-    // 清理函數
     return () => {
       if (mapInstanceRef_internal.current) {
         mapInstanceRef_internal.current.remove();
@@ -187,7 +220,7 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     };
   }, [currentLayerIndex, mapInstanceRef]);
   
-  // 當地點數據更新時添加標記
+  // 當地點數據或篩選條件更新時添加/更新標記
   useEffect(() => {
     if (!mapInstanceRef.current || !locations.length) return;
     
@@ -197,22 +230,19 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     });
     markersRef.current = [];
     
-    // 添加新標記
-    locations.forEach(loc => {
+    // 根據篩選條件過濾地點
+    const filteredLocations = locations.filter(loc => 
+      activeFilter === 'all' || matchesFilter(loc, activeFilter)
+    );
+    
+    // 只添加符合篩選條件的標記
+    filteredLocations.forEach(loc => {
       const lat = parseFloat(loc.latitude);
       const lon = parseFloat(loc.longitude);
       
       if (!isNaN(lat) && !isNaN(lon)) {
         // 根據標籤確定 marker 類型
         const markerType = determineMarkerType(loc.tag);
-        
-        // 除錯：檢查標籤分類是否正確
-        if (loc.tag && loc.tag.length > 0) {
-          console.log(`🏷️ 地點: ${loc.name}`);
-          console.log(`   原始標籤:`, loc.tag);
-          console.log(`   選擇的類型: ${markerType}`);
-          console.log(`   使用的 icon: ${MARKER_ICONS[markerType]}`);
-        }
         
         // 創建對應的 icon
         const customIcon = createCustomIcon(markerType);
@@ -224,12 +254,22 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
             onLocationSelect(loc);
           });
         
-        // 添加彈出窗口（顯示地點名稱和主要標籤）
+        // 為篩選狀態下的標記添加強調效果
+        if (activeFilter !== 'all') {
+          const element = marker.getElement();
+          if (element) {
+            element.style.animation = 'markerPulse 2s infinite';
+            element.classList.add('marker-highlighted');
+          }
+        }
+        
+        // 添加彈出窗口
         const allTags = extractAllTags(loc.tag);
         const popupContent = `
           <div style="text-align: center;">
             <strong>${loc.name}</strong>
             ${allTags.length > 0 ? `<br><small style="color: #666;">${allTags.slice(0, 3).join(', ')}${allTags.length > 3 ? '...' : ''}</small>` : ''}
+            ${activeFilter !== 'all' ? '<br><span style="color: #1a73e8; font-weight: bold;">✓ 符合篩選</span>' : ''}
           </div>
         `;
         marker.bindPopup(popupContent);
@@ -237,7 +277,7 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
         markersRef.current.push(marker);
       }
     });
-  }, [locations, onLocationSelect, mapInstanceRef]);
+  }, [locations, onLocationSelect, activeFilter]);
   
   // 當選中的地點變化時，將地圖居中到該地點
   useEffect(() => {
@@ -249,7 +289,24 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     if (!isNaN(lat) && !isNaN(lon)) {
       mapInstanceRef.current.setView([lat, lon], 19);
     }
-  }, [selectedLocation, mapInstanceRef]);
+  }, [selectedLocation]);
+  
+  // 處理標籤篩選變化
+  const handleFilterChange = (filterType) => {
+    setActiveFilter(filterType);
+    
+    // 如果篩選到特定類型，可以自動調整地圖視角到顯示所有符合條件的標記
+    if (filterType !== 'all') {
+      const filteredLocations = locations.filter(loc => matchesFilter(loc, filterType));
+      if (filteredLocations.length > 0 && mapInstanceRef.current) {
+        // 計算所有符合條件地點的邊界
+        const bounds = L.latLngBounds(
+          filteredLocations.map(loc => [parseFloat(loc.latitude), parseFloat(loc.longitude)])
+        );
+        mapInstanceRef.current.fitBounds(bounds, { padding: [20, 20] });
+      }
+    }
+  };
   
   // 處理用戶定位
   const handleLocateUser = () => {
@@ -303,21 +360,18 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
     }
   };
 
-  // 處理新增地點按鈕點擊
+  // 處理新增地點相關功能
   const handleAddLocationClick = () => {
     setShowAddLocationModal(true);
   };
 
-  // 處理新增地點成功
   const handleLocationAdded = (newLocation) => {
     setShowAddLocationModal(false);
-    // 通知父組件重新載入地點資料
     if (onLocationAdded) {
       onLocationAdded(newLocation);
     }
   };
 
-  // 處理模態框關閉
   const handleCloseModal = () => {
     setShowAddLocationModal(false);
   };
@@ -325,6 +379,14 @@ const Map = ({ locations, onLocationSelect, selectedLocation, isAdmin, onLocatio
   return (
     <>
       <div id="map" ref={mapRef} className="map-container"></div>
+      
+      {/* 新增：標籤篩選器 */}
+      <TagFilter
+        locations={locations}
+        onFilterChange={handleFilterChange}
+        selectedFilter={activeFilter}
+        isFullScreen={isFullScreen}
+      />
       
       {/* 右下角按鈕群組 */}
       <div className="map-controls-container">

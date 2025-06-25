@@ -1,0 +1,313 @@
+/* TagFilter.css - 標籤篩選器樣式 (Google Maps 風格) */
+
+.tag-filter-container {
+  position: absolute;
+  top: 80px; /* 搜尋欄下方 */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  width: 90%;
+  max-width: 800px;
+  padding: 8px 0;
+  transition: all 0.3s ease;
+}
+
+.tag-filter-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 4px 8px;
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.tag-filter-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+.tag-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: white;
+  border: 1px solid #dadce0;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #3c4043;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  min-height: 40px;
+}
+
+.tag-filter-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transition: left 0.5s ease;
+}
+
+.tag-filter-btn:hover::before {
+  left: 100%;
+}
+
+.tag-filter-btn:hover {
+  background: #f8f9fa;
+  border-color: #dadce0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.tag-filter-btn.active {
+  background: #1a73e8;
+  border-color: #1a73e8;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.25), 0 1px 4px rgba(26, 115, 232, 0.15);
+}
+
+.tag-filter-btn.active:hover {
+  background: #1557b0;
+  border-color: #1557b0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 115, 232, 0.3), 0 2px 6px rgba(26, 115, 232, 0.2);
+}
+
+.tag-icon {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+}
+
+.tag-name {
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  font-size: 14px;
+}
+
+/* 動畫效果 */
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.tag-filter-container {
+  animation: slideInFromTop 0.4s ease-out;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .tag-filter-container {
+    top: 70px;
+    width: 95%;
+    max-width: none;
+  }
+  
+  .tag-filter-scroll {
+    gap: 8px;
+    padding: 4px;
+    justify-content: flex-start;
+  }
+  
+  .tag-filter-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    gap: 6px;
+    min-height: 36px;
+  }
+  
+  .tag-icon {
+    font-size: 14px;
+    min-width: 14px;
+  }
+  
+  .tag-name {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .tag-filter-container {
+    top: 65px;
+    width: 98%;
+  }
+  
+  .tag-filter-scroll {
+    gap: 6px;
+    padding: 2px;
+  }
+  
+  .tag-filter-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 4px;
+    min-height: 32px;
+  }
+  
+  .tag-icon {
+    font-size: 14px;
+  }
+  
+  .tag-name {
+    font-size: 12px;
+  }
+}
+
+/* 特殊標籤樣式 */
+.tag-filter-btn[data-category="all"] {
+  border-color: #34a853;
+  color: #137333;
+}
+
+.tag-filter-btn[data-category="all"]:hover {
+  background: #e8f5e8;
+  border-color: #34a853;
+}
+
+.tag-filter-btn[data-category="all"].active {
+  background: #34a853;
+  border-color: #34a853;
+  color: white;
+}
+
+.tag-filter-btn[data-category="village_evening"] {
+  border-color: #ff9800;
+  color: #e65100;
+}
+
+.tag-filter-btn[data-category="village_evening"]:hover {
+  background: #fff3e0;
+  border-color: #ff9800;
+}
+
+.tag-filter-btn[data-category="village_evening"].active {
+  background: #ff9800;
+  border-color: #ff9800;
+  color: white;
+}
+
+.tag-filter-btn[data-category="church"] {
+  border-color: #9c27b0;
+  color: #6a1b9a;
+}
+
+.tag-filter-btn[data-category="church"]:hover {
+  background: #f3e5f5;
+  border-color: #9c27b0;
+}
+
+.tag-filter-btn[data-category="church"].active {
+  background: #9c27b0;
+  border-color: #9c27b0;
+  color: white;
+}
+
+.tag-filter-btn[data-category="festival"] {
+  border-color: #f44336;
+  color: #c62828;
+}
+
+.tag-filter-btn[data-category="festival"]:hover {
+  background: #ffebee;
+  border-color: #f44336;
+}
+
+.tag-filter-btn[data-category="festival"].active {
+  background: #f44336;
+  border-color: #f44336;
+  color: white;
+}
+
+.tag-filter-btn[data-category="clan"] {
+  border-color: #795548;
+  color: #5d4037;
+}
+
+.tag-filter-btn[data-category="clan"]:hover {
+  background: #efebe9;
+  border-color: #795548;
+}
+
+.tag-filter-btn[data-category="clan"].active {
+  background: #795548;
+  border-color: #795548;
+  color: white;
+}
+
+.tag-filter-btn[data-category="farm"] {
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.tag-filter-btn[data-category="farm"]:hover {
+  background: #e8f5e8;
+  border-color: #4caf50;
+}
+
+.tag-filter-btn[data-category="farm"].active {
+  background: #4caf50;
+  border-color: #4caf50;
+  color: white;
+}
+
+.tag-filter-btn[data-category="defense"] {
+  border-color: #607d8b;
+  color: #455a64;
+}
+
+.tag-filter-btn[data-category="defense"]:hover {
+  background: #eceff1;
+  border-color: #607d8b;
+}
+
+.tag-filter-btn[data-category="defense"].active {
+  background: #607d8b;
+  border-color: #607d8b;
+  color: white;
+}
+
+/* 滾動提示 */
+.tag-filter-scroll {
+  position: relative;
+}
+
+.tag-filter-scroll::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 20px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.8), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 只在電腦版且內容溢出時顯示滾動提示 */
+@media (min-width: 769px) {
+  .tag-filter-scroll:hover::after {
+    opacity: 1;
+  }
+}
