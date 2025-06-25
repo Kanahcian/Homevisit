@@ -3,11 +3,10 @@
 .tag-filter-container {
   position: absolute;
   top: 80px; /* 搜尋欄下方 */
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
   z-index: 1100;
-  width: 90%;
-  max-width: 800px;
+  width: 100%;
   padding: 8px 0;
   transition: all 0.3s ease;
 }
@@ -16,12 +15,15 @@
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding: 4px 8px;
+  padding: 4px 12px; /* 增加左右內邊距 */
   scroll-behavior: smooth;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
-  justify-content: center;
+  justify-content: center; /* 桌面版居中顯示 */
   flex-wrap: nowrap;
+  -webkit-overflow-scrolling: touch; /* 為 iOS 設備增加平滑滾動 */
+  max-width: 800px; /* 限制最大寬度 */
+  margin: 0 auto; /* 居中容器 */
 }
 
 .tag-filter-scroll::-webkit-scrollbar {
@@ -69,4 +71,50 @@
   border-color: #555;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* 增加滾動提示箭頭 */
+.tag-filter-container::after {
+  content: '→';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 4px 8px;
+  border-radius: 50%;
+  font-size: 14px;
+  color: #666;
+  pointer-events: none; /* 讓用戶可以點擊穿透箭頭 */
+  animation: pulse 1.5s infinite;
+  display: none; /* 默認隱藏，下面的媒體查詢中顯示 */
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+/* 響應式調整 - 在移動設備上顯示滾動提示 */
+@media (max-width: 768px) {
+  .tag-filter-container {
+    top: 70px; /* 調整在移動設備上的位置 */
+  }
+  
+  .tag-filter-scroll {
+    justify-content: flex-start; /* 移動設備上左對齊 */
+    padding-left: 12px; /* 確保第一個標籤可見 */
+    padding-right: 30px; /* 為右側箭頭提示騰出空間 */
+  }
+  
+  .tag-filter-container::after {
+    display: block; /* 在移動設備上顯示滾動提示 */
+  }
+  
+  /* 標籤按鈕在移動設備上稍微縮小一點 */
+  .tag-filter-btn {
+    padding: 8px 14px;
+    font-size: 13px;
+    min-height: 36px;
+  }
 }
