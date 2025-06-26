@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import './TagFilter.css';
 
 // 標籤分類配置
@@ -80,6 +80,51 @@ const extractAllTags = (tagArray) => {
 };
 
 const TagFilter = ({ locations, onFilterChange, selectedFilter, isFullScreen }) => {
+  // 狀態管理
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+
+  // 監聽選單和搜尋狀態變化
+  useEffect(() => {
+    const checkMenuState = () => {
+      const sideMenu = document.querySelector('.side-menu');
+      const isOpen = sideMenu && sideMenu.classList.contains('open');
+      setIsMenuOpen(isOpen);
+    };
+
+    const checkSearchState = () => {
+      const searchContainer = document.querySelector('.search-container');
+      const isActive = searchContainer && searchContainer.classList.contains('active');
+      setIsSearchActive(isActive);
+    };
+
+    // 初始檢查
+    checkMenuState();
+    checkSearchState();
+
+    // 設置觀察器來監聽 DOM 變化
+    const observer = new MutationObserver(() => {
+      checkMenuState();
+      checkSearchState();
+    });
+
+    // 監聽整個文檔的類變化
+    const sideMenu = document.querySelector('.side-menu');
+    const searchContainer = document.querySelector('.search-container');
+    
+    if (sideMenu) {
+      observer.observe(sideMenu, { attributes: true, attributeFilter: ['class'] });
+    }
+    
+    if (searchContainer) {
+      observer.observe(searchContainer, { attributes: true, attributeFilter: ['class'] });
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   // 過濾出有地點的分類
   const availableCategories = useMemo(() => {
     const categories = TAG_CATEGORIES.filter(category => {
@@ -90,18 +135,9 @@ const TagFilter = ({ locations, onFilterChange, selectedFilter, isFullScreen }) 
         return category.matchFunction(allTags);
       });
       
-      // 調試：確保村晚標籤被正確識別
-      if (category.id === 'village_evening') {
-        console.log('村晚標籤檢查:', {
-          hasLocations,
-          sampleTags: locations.slice(0, 3).map(loc => extractAllTags(loc.tag))
-        });
-      }
-      
       return hasLocations;
     });
     
-    console.log('可用標籤類別:', categories.map(c => c.name));
     return categories;
   }, [locations]);
 
@@ -117,8 +153,15 @@ const TagFilter = ({ locations, onFilterChange, selectedFilter, isFullScreen }) 
     return null;
   }
 
+  // 動態生成容器類名
+  const containerClasses = [
+    'tag-filter-container',
+    isMenuOpen && window.innerWidth > 768 ? 'menu-open' : '',
+    isSearchActive ? 'search-active' : ''
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className="tag-filter-container">
+    <div className={containerClasses}>
       <div className="tag-filter-scroll">
         {availableCategories.map(category => (
           <button

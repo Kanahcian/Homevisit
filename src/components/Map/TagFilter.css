@@ -1,14 +1,36 @@
-/* TagFilter.css - 標籤篩選器樣式 (簡約黑白風格) */
+/* TagFilter.css - 標籤篩選器樣式 (修復層級問題) */
 
 .tag-filter-container {
   position: absolute;
   top: 80px; /* 搜尋欄下方 */
   left: 0;
   right: 0;
-  z-index: 1100;
+  z-index: 999; /* 降低 z-index，避免覆蓋選單和搜尋建議 */
   width: 100%;
   padding: 8px 0;
   transition: all 0.3s ease;
+}
+
+/* 當有搜尋建議時，進一步降低 z-index */
+.tag-filter-container.search-active {
+  z-index: 500;
+}
+
+/* 當選單打開時，在桌面版調整位置 */
+.tag-filter-container.menu-open {
+  left: 280px;
+  transition: left 0.3s ease;
+}
+
+/* 當側邊選單打開時，調整標籤篩選器位置 */
+.side-menu.open ~ .map-container .tag-filter-container {
+  left: 280px; /* 避開側邊選單寬度 */
+  transition: left 0.3s ease;
+}
+
+/* 當搜尋建議顯示時，降低標籤篩選器的 z-index */
+.search-container.active ~ .map-container .tag-filter-container {
+  z-index: 500; /* 確保搜尋建議在上方 */
 }
 
 .tag-filter-scroll {
@@ -95,10 +117,17 @@
   50% { opacity: 1; }
 }
 
-/* 響應式調整 - 在移動設備上顯示滾動提示 */
+/* 響應式調整 - 移動設備 */
 @media (max-width: 768px) {
   .tag-filter-container {
     top: 70px; /* 調整在移動設備上的位置 */
+  }
+  
+  /* 移動設備上當選單打開時，隱藏標籤篩選器 */
+  .tag-filter-container.menu-open {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
   }
   
   .tag-filter-scroll {
@@ -116,5 +145,19 @@
     padding: 8px 14px;
     font-size: 13px;
     min-height: 36px;
+  }
+}
+
+/* 桌面版響應式調整 */
+@media (min-width: 769px) {
+  /* 桌面版當側邊選單打開時的調整 */
+  .tag-filter-container.menu-open {
+    left: 300px; /* 留出更多空間 */
+    max-width: calc(100vw - 320px); /* 調整最大寬度 */
+  }
+  
+  .tag-filter-container.menu-open .tag-filter-scroll {
+    justify-content: flex-start; /* 側邊選單打開時左對齊 */
+    max-width: none;
   }
 }

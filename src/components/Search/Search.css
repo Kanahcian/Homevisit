@@ -52,7 +52,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
     max-height: 300px !important;
     overflow-y: auto !important;
-    z-index: 1000 !important; /* 確保在地圖上方 */
+    z-index: 1200 !important; /* 提高 z-index，確保在標籤篩選器之上 */
   }
   
   /* 建議列表項目 */
