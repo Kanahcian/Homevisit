@@ -1,4 +1,4 @@
-/* RecordDetails.css - 家訪紀錄詳情樣式 */
+/* RecordDetails.css - 家訪紀錄詳情樣式 (修復自適應高度版本) */
 
 /* ===========================================
    緊湊布局樣式 (新增)
@@ -153,14 +153,64 @@
   margin-right: 2px;
 }
 
-/* 家訪記錄描述 */
+/* 家訪記錄描述 - 修復版本：移除高度限制 */
 .visit-description {
   font-size: 15px;
-  line-height: 1.4;
+  line-height: 1.6; /* 增加行高提升可讀性 */
   color: #333;
   text-align: left;
-  max-height: 80px;
-  overflow-y: auto;
+  /* 移除以下限制性樣式 */
+  /* max-height: 80px; */
+  /* overflow-y: auto; */
+  
+  /* 新增：改善長文本顯示 */
+  word-wrap: break-word; /* 自動換行 */
+  word-break: break-word; /* 處理長單詞 */
+  white-space: pre-wrap; /* 保留空白和換行 */
+  padding: 8px 0; /* 增加內邊距 */
+}
+
+/* 如果需要，可以設置最大高度但提供展開功能 */
+.visit-description.collapsible {
+  max-height: 120px; /* 比原來稍高一些 */
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.3s ease;
+}
+
+.visit-description.collapsible.expanded {
+  max-height: none;
+}
+
+/* 展開/收起按鈕 */
+.description-toggle {
+  background: none;
+  border: none;
+  color: #4a8fe7;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 8px;
+  padding: 4px 0;
+  text-decoration: underline;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.description-toggle:hover {
+  color: #3972c0;
+}
+
+/* 漸變遮罩效果（用於收起狀態） */
+.visit-description.collapsible:not(.expanded)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(transparent, #fafafa);
+  pointer-events: none;
 }
 
 /* 照片專用區塊 - 無邊框無背景 */
@@ -226,9 +276,16 @@
     right: 4px;
   }
   
+  /* 移動設備上的描述樣式 - 也移除高度限制 */
   .visit-description {
     font-size: 15px;
-    max-height: 70px;
+    /* max-height: 70px; 移除這個限制 */
+    line-height: 1.5;
+  }
+  
+  /* 如果使用可收起功能，移動設備上的初始高度 */
+  .visit-description.collapsible {
+    max-height: 100px;
   }
   
   .compact-photo {
@@ -425,7 +482,7 @@
   border-radius: 8px;
 }
 
-/* 訪視筆記 */
+/* 訪視筆記 - 也移除高度限制 */
 .visit-notes {
   margin-top: 15px;
   background-color: #fff;
@@ -454,6 +511,10 @@
   margin: 0;
   color: #555;
   font-size: 14px;
+  line-height: 1.6;
+  /* 移除高度限制，讓內容自然流動 */
+  word-wrap: break-word;
+  white-space: pre-wrap;
 }
 
 /* 錯誤狀態 */

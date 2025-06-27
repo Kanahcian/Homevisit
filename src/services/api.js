@@ -402,17 +402,21 @@ export const deleteLocation = async (locationId) => {
   }
 };
 
-export default {
+// 將所有 API 函數組合成一個服務對象
+const apiService = {
   fetchLocations,
   fetchRecords,
   fetchVillagerDetails,
   findVillagerIdByName,
   addLocation,
-  updateLocation,  // 新增
-  deleteLocation,  // 新增
+  updateLocation,
+  deleteLocation,
   convertGoogleDriveLink,
   formatDate
 };
+
+// 使用命名導出，避免匿名默認導出警告
+export default apiService;
 
 // 添加一個測試函數，方便在控制台中測試
 export const testVillagerAPI = async (id = 1) => {

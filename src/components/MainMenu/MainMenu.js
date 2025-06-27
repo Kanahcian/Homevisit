@@ -3,7 +3,7 @@ import './MainMenu.css';
 
 const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, isAdmin, onAdminLogin, onAdminLogout }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [expandedItems, setExpandedItems] = useState(['faq']); // 預設展開家訪大哉問
+  // const [expandedItems, setExpandedItems] = useState(['faq']); // 預設展開家訪大哉問
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   
   // 登入相關狀態

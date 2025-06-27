@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './VillagerModal.css';
 import { fetchVillagerDetails } from '../../services/api';
 
@@ -7,14 +7,8 @@ const VillagerModal = ({ isOpen, onClose, villagerId, villagerName }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    // 只有當彈窗開啟且有村民ID時才獲取資料
-    if (isOpen && villagerId) {
-      loadVillagerInfo();
-    }
-  }, [isOpen, villagerId]);
-
-  const loadVillagerInfo = async () => {
+  // 使用 useCallback 包裝 loadVillagerInfo 函數
+  const loadVillagerInfo = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -28,7 +22,14 @@ const VillagerModal = ({ isOpen, onClose, villagerId, villagerName }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [villagerId]); // villagerId 是依賴項
+
+  useEffect(() => {
+    // 只有當彈窗開啟且有村民ID時才獲取資料
+    if (isOpen && villagerId) {
+      loadVillagerInfo();
+    }
+  }, [isOpen, villagerId, loadVillagerInfo]); // 現在包含所有依賴項
 
   // 如果彈窗未開啟，不渲染任何內容
   if (!isOpen) return null;

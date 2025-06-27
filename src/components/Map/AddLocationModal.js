@@ -203,7 +203,26 @@ const AddLocationModal = ({ onLocationAdded, onClose, mapInstance }) => {
           <div className="coordinate-section">
             <div className="coordinate-header">
               <h4>坐標資訊 *</h4>
-              
+              <div className="coordinate-buttons">
+                <button
+                  type="button"
+                  className={`coordinate-btn ${isMapClickMode ? 'active' : ''}`}
+                  onClick={isMapClickMode ? cancelMapClickMode : enableMapClickMode}
+                  disabled={isLoading}
+                >
+                  <i className="fas fa-map-marker-alt"></i>
+                  {isMapClickMode ? '取消選擇' : '地圖選點'}
+                </button>
+                <button
+                  type="button"
+                  className="coordinate-btn"
+                  onClick={getCurrentLocation}
+                  disabled={isLoading}
+                >
+                  <i className="fas fa-location-arrow"></i>
+                  目前位置
+                </button>
+              </div>
             </div>
             
             {isMapClickMode && (

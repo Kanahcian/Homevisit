@@ -28,7 +28,7 @@ const SidePanel = ({
   // 【新增】調整按鈕位置 - 桌面版側邊欄
   useEffect(() => {
     const adjustButtonPositions = (isActive) => {
-      const controlsContainer = document.querySelector('.map-controls-container');
+      // 移除未使用的 controlsContainer 變數
       const appContainer = document.querySelector('.app-container');
       
       if (isActive) {
