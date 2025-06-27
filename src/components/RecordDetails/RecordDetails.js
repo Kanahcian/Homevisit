@@ -1,46 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import './RecordDetails.css';
 import VillagerModal from '../VillagerModal/VillagerModal';
 
-// 智能描述組件 - 根據內容長度決定是否需要展開/收起功能
-const SmartDescription = ({ description, maxLines = 4 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [needsToggle, setNeedsToggle] = useState(false);
-  const textRef = useRef(null);
-
-  useEffect(() => {
-    if (textRef.current && description) {
-      // 檢查文本是否超過指定行數
-      const lineHeight = parseInt(window.getComputedStyle(textRef.current).lineHeight);
-      const maxHeight = lineHeight * maxLines;
-      const actualHeight = textRef.current.scrollHeight;
-      
-      setNeedsToggle(actualHeight > maxHeight);
-    }
-  }, [description, maxLines]);
-
+// 智能描述組件 - 修改為完整顯示模式
+const SmartDescription = ({ description, compactLayout = false }) => {
+  // 移除展開/收起功能，直接完整顯示
   if (!description || description === "無訪視筆記") {
     return <span className="empty-info">無訪視筆記</span>;
   }
 
   return (
-    <div>
-      <div 
-        ref={textRef}
-        className={`visit-description ${needsToggle && !isExpanded ? 'collapsible' : ''} ${isExpanded ? 'expanded' : ''}`}
-        style={needsToggle && !isExpanded ? { maxHeight: `${maxLines * 1.6}em` } : {}}
-      >
-        {description}
-      </div>
-      {needsToggle && (
-        <button 
-          className="description-toggle"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <i className={`fas fa-chevron-${isExpanded ? 'up' : 'down'}`}></i>
-          {isExpanded ? '收起' : '展開更多'}
-        </button>
-      )}
+    <div className={`visit-description ${compactLayout ? 'compact' : 'full'}`}>
+      {description}
     </div>
   );
 };
@@ -146,14 +117,14 @@ const RecordDetails = ({ record, compactLayout = false }) => {
             </div>
           </div>
           
-          {/* 第二行：家訪記錄 */}
+          {/* 第二行：家訪記錄 - 完整顯示，不使用限制 */}
           <div className="compact-row">
             <div className="compact-section full-width">
               <div className="section-title">家訪記錄</div>
               <div className="section-content">
                 <SmartDescription 
                   description={record.description} 
-                  maxLines={3} // 緊湊布局使用較少的行數
+                  compactLayout={true}
                 />
               </div>
             </div>
@@ -168,7 +139,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
                     <img 
                       src={record.photo} 
                       alt="訪視照片" 
-                      className="compact-photo"
+                      className="compact-photo hoverable-image"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = '/assets/images/photo-error.png';
@@ -249,6 +220,7 @@ const RecordDetails = ({ record, compactLayout = false }) => {
           <img 
             src={record.photo} 
             alt="訪視照片" 
+            className="hoverable-image"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src = '/assets/images/photo-error.png';
@@ -260,13 +232,13 @@ const RecordDetails = ({ record, compactLayout = false }) => {
         )}
       </div>
 
-      {/* 访视笔记 - 使用智能描述組件 */}
+      {/* 访视笔记 - 完整顯示 */}
       <div className="visit-notes">
         <h3><i className="fas fa-clipboard"></i> 訪視筆記</h3>
         <div id="visit-notes">
           <SmartDescription 
             description={record.description} 
-            maxLines={5} // 原始布局可以使用更多行數
+            compactLayout={false}
           />
         </div>
       </div>
