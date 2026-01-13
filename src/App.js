@@ -69,13 +69,50 @@ function App() {
 
   const handleLocationDeleted = (deletedLocationId) => {
     console.log('地點已刪除, ID:', deletedLocationId);
-    setLocations(prevLocations => 
+    setLocations(prevLocations =>
       prevLocations.filter(loc => loc.id !== deletedLocationId)
     );
     if (selectedLocation && selectedLocation.id === deletedLocationId) {
       setSelectedLocation(null);
       setLocationRecords([]);
       setShowRecords(false);
+    }
+  };
+
+  // 處理家訪記錄相關事件
+  const handleRecordSaved = async (savedRecord) => {
+    console.log('家訪記錄已保存:', savedRecord);
+    // 重新加載當前地點的記錄
+    if (selectedLocation) {
+      setIsLoading(true);
+      try {
+        const records = await fetchRecords(selectedLocation.id);
+        setLocationRecords(records);
+      } catch (error) {
+        console.error('無法重新加載家訪記錄:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleRecordDeleted = async (deletedRecordId) => {
+    console.log('家訪記錄已刪除, ID:', deletedRecordId);
+    // 重新加載當前地點的記錄
+    if (selectedLocation) {
+      setIsLoading(true);
+      try {
+        const records = await fetchRecords(selectedLocation.id);
+        setLocationRecords(records);
+        // 如果刪除後沒有記錄了，切換回地點資訊視圖
+        if (records.length === 0) {
+          setShowRecords(false);
+        }
+      } catch (error) {
+        console.error('無法重新加載家訪記錄:', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -195,7 +232,7 @@ function App() {
       
       {/* 側邊欄(桌面版) */}
       {!isFullScreenContent && !isMobile && selectedLocation && (
-        <SidePanel 
+        <SidePanel
           location={selectedLocation}
           records={locationRecords}
           isLoading={isLoading}
@@ -208,13 +245,15 @@ function App() {
           isAdmin={isAdmin}
           onLocationUpdated={handleLocationUpdated}
           onLocationDeleted={handleLocationDeleted}
+          onRecordSaved={handleRecordSaved}
+          onRecordDeleted={handleRecordDeleted}
           mapInstance={mapInstanceRef.current}
         />
       )}
       
       {/* 底部卡片(手機版) */}
       {!isFullScreenContent && isMobile && selectedLocation && (
-        <BottomCard 
+        <BottomCard
           location={selectedLocation}
           records={locationRecords}
           isLoading={isLoading}
@@ -227,6 +266,8 @@ function App() {
           isAdmin={isAdmin}
           onLocationUpdated={handleLocationUpdated}
           onLocationDeleted={handleLocationDeleted}
+          onRecordSaved={handleRecordSaved}
+          onRecordDeleted={handleRecordDeleted}
           mapInstance={mapInstanceRef.current}
         />
       )}

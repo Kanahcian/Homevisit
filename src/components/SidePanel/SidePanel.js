@@ -1,22 +1,25 @@
 import React, { useState, useMemo, useEffect } from 'react'; // 確保導入 useEffect
 import './SidePanel.css';
-import '../LoadingAnimation.css'; 
+import '../LoadingAnimation.css';
 import LocationInfo from '../LocationInfo/LocationInfo';
 import RecordDetails from '../RecordDetails/RecordDetails';
 import EditLocationModal from '../Map/EditLocationModal';
 import DeleteConfirmModal from '../Map/DeleteConfirmModal';
+import RecordFormModal from '../RecordForm/RecordFormModal';
 
-const SidePanel = ({ 
-  location, 
-  records, 
-  isLoading, 
-  showRecords, 
+const SidePanel = ({
+  location,
+  records,
+  isLoading,
+  showRecords,
   toggleRecordsView,
   isActive,
   onClose,
   isAdmin,
   onLocationUpdated,
   onLocationDeleted,
+  onRecordSaved,
+  onRecordDeleted,
   mapInstance
 }) => {
   // 管理每個年份的展開/收起狀態
@@ -24,6 +27,9 @@ const SidePanel = ({
   // 管理員模態框狀態
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  // 記錄表單模態框狀態
+  const [showRecordForm, setShowRecordForm] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
 
   // 【新增】調整按鈕位置 - 桌面版側邊欄
   useEffect(() => {
@@ -123,6 +129,24 @@ const SidePanel = ({
     }
     setExpandedYears(newExpandedYears);
   };
+
+  // 打開新增記錄表單
+  const handleAddRecord = () => {
+    setEditingRecord(null);
+    setShowRecordForm(true);
+  };
+
+  // 打開編輯記錄表單
+  const handleEditRecord = (record) => {
+    setEditingRecord(record);
+    setShowRecordForm(true);
+  };
+
+  // 關閉記錄表單
+  const handleCloseRecordForm = () => {
+    setShowRecordForm(false);
+    setEditingRecord(null);
+  };
   
   // 如果側邊欄未激活，則不顯示
   if (!isActive) {
@@ -186,7 +210,16 @@ const SidePanel = ({
         {showRecords && records && records.length > 0 && (
           <div id="records-section" className="records-section">
             <div className="records-summary">
-              <span>共 {records.length} 筆記錄</span>
+              {isAdmin && (
+                <button
+                  className="admin-btn add-record-btn"
+                  onClick={handleAddRecord}
+                  title="新增家訪記錄"
+                >
+                  <i className="fas fa-plus"></i>
+                  新增記錄
+                </button>
+              )}
             </div>
             
             {/* 按年份分組的記錄 */}
@@ -215,6 +248,15 @@ const SidePanel = ({
                     <div className="year-records">
                       {yearRecords.map((record, index) => (
                         <div key={`${year}-${index}`} className="record-item">
+                          {isAdmin && (
+                            <button
+                              className="record-edit-btn"
+                              onClick={() => handleEditRecord(record)}
+                              title="編輯記錄"
+                            >
+                              <i className="fas fa-edit"></i>
+                            </button>
+                          )}
                           <RecordDetails record={record} compactLayout={true} />
                         </div>
                       ))}
@@ -248,6 +290,23 @@ const SidePanel = ({
               if (onLocationDeleted) onLocationDeleted(locationId);
             }}
             onClose={() => setShowDeleteModal(false)}
+          />
+        )}
+
+        {/* 記錄表單模態框 */}
+        {showRecordForm && location && (
+          <RecordFormModal
+            record={editingRecord}
+            locationId={location.id}
+            onRecordSaved={(savedRecord) => {
+              handleCloseRecordForm();
+              if (onRecordSaved) onRecordSaved(savedRecord);
+            }}
+            onRecordDeleted={(deletedRecordId) => {
+              handleCloseRecordForm();
+              if (onRecordDeleted) onRecordDeleted(deletedRecordId);
+            }}
+            onClose={handleCloseRecordForm}
           />
         )}
     </div>

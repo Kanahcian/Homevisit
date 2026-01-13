@@ -190,10 +190,12 @@ export const fetchRecords = async (locationId) => {
         return {
           recordId: record.recordid,
           semester: record.semester,
-          date: formatDate(record.date),
+          rawDate: record.date, // 保留原始日期格式供編輯使用
+          date: formatDate(record.date), // 格式化日期供顯示使用
           description: record.description || "無訪視筆記",
           photo: convertGoogleDriveLink(record.photo),
           account: record.account,
+          account_id: record.account_id || record.account, // 保留 account_id
           students: record.students || [],
           villagers: villagerDetails || [],
         };
@@ -366,14 +368,14 @@ export const updateLocation = async (locationId, locationData) => {
 export const deleteLocation = async (locationId) => {
   try {
     console.log(`正在刪除地點 ID: ${locationId}`);
-    
+
     const response = await fetch(`${API_BASE_URL}/api/location/${locationId}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       }
     });
-    
+
     if (!response.ok) {
       let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
       try {
@@ -386,9 +388,9 @@ export const deleteLocation = async (locationId) => {
       }
       throw new Error(errorMessage);
     }
-    
+
     const data = await response.json();
-    
+
     if (data.status === "success") {
       console.log('地點刪除成功:', data.message);
       return data;
@@ -402,6 +404,154 @@ export const deleteLocation = async (locationId) => {
   }
 };
 
+// ==================== 家訪記錄 CRUD 操作 ====================
+
+// 新增家訪記錄
+export const createRecord = async (recordData) => {
+  try {
+    console.log('正在新增家訪記錄:', recordData);
+
+    const response = await fetch(`${API_BASE_URL}/api/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(recordData)
+    });
+
+    if (!response.ok) {
+      let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        console.error('創建記錄 API 錯誤響應:', errorData);
+
+        if (errorData.detail) {
+          // 處理 FastAPI 驗證錯誤格式（detail 可能是數組）
+          if (Array.isArray(errorData.detail)) {
+            errorMessage = errorData.detail.map(err =>
+              `${err.loc ? err.loc.join('.') : 'unknown'}: ${err.msg || JSON.stringify(err)}`
+            ).join('; ');
+          } else if (typeof errorData.detail === 'string') {
+            errorMessage = errorData.detail;
+          } else {
+            errorMessage = JSON.stringify(errorData.detail);
+          }
+        }
+      } catch (e) {
+        console.error('無法解析錯誤響應:', e);
+        // 如果無法解析錯誤響應，使用默認錯誤訊息
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      console.log('家訪記錄新增成功:', data.data);
+      return data.data;
+    } else {
+      console.error("新增家訪記錄失敗", data);
+      throw new Error(data.message || '新增家訪記錄失敗');
+    }
+  } catch (error) {
+    console.error("新增家訪記錄 API 請求錯誤:", error);
+    throw error;
+  }
+};
+
+// 更新家訪記錄
+export const updateRecord = async (recordId, recordData) => {
+  try {
+    console.log(`正在更新家訪記錄 ID: ${recordId}`, recordData);
+
+    const response = await fetch(`${API_BASE_URL}/api/update/${recordId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(recordData)
+    });
+
+    if (!response.ok) {
+      let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        console.error('更新記錄 API 錯誤響應:', errorData);
+
+        if (errorData.detail) {
+          // 處理 FastAPI 驗證錯誤格式（detail 可能是數組）
+          if (Array.isArray(errorData.detail)) {
+            errorMessage = errorData.detail.map(err =>
+              `${err.loc ? err.loc.join('.') : 'unknown'}: ${err.msg || JSON.stringify(err)}`
+            ).join('; ');
+          } else if (typeof errorData.detail === 'string') {
+            errorMessage = errorData.detail;
+          } else {
+            errorMessage = JSON.stringify(errorData.detail);
+          }
+        }
+      } catch (e) {
+        console.error('無法解析錯誤響應:', e);
+        // 如果無法解析錯誤響應，使用默認錯誤訊息
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      console.log('家訪記錄更新成功:', data.data);
+      return data.data;
+    } else {
+      console.error("更新家訪記錄失敗", data);
+      throw new Error(data.message || '更新家訪記錄失敗');
+    }
+  } catch (error) {
+    console.error("更新家訪記錄 API 請求錯誤:", error);
+    throw error;
+  }
+};
+
+// 刪除家訪記錄
+export const deleteRecord = async (recordId) => {
+  try {
+    console.log(`正在刪除家訪記錄 ID: ${recordId}`);
+
+    const response = await fetch(`${API_BASE_URL}/api/delete/${recordId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      let errorMessage = `API請求失敗: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail) {
+          errorMessage = errorData.detail;
+        }
+      } catch (e) {
+        // 如果無法解析錯誤響應，使用默認錯誤訊息
+      }
+      throw new Error(errorMessage);
+    }
+
+    const data = await response.json();
+
+    if (data.status === "success") {
+      console.log('家訪記錄刪除成功:', data.message);
+      return data;
+    } else {
+      console.error("刪除家訪記錄失敗", data);
+      throw new Error(data.message || '刪除家訪記錄失敗');
+    }
+  } catch (error) {
+    console.error("刪除家訪記錄 API 請求錯誤:", error);
+    throw error;
+  }
+};
+
 // 將所有 API 函數組合成一個服務對象
 const apiService = {
   fetchLocations,
@@ -411,6 +561,9 @@ const apiService = {
   addLocation,
   updateLocation,
   deleteLocation,
+  createRecord,
+  updateRecord,
+  deleteRecord,
   convertGoogleDriveLink,
   formatDate
 };
