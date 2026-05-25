@@ -449,7 +449,7 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, i
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>王涵</td>
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>邱晨蓁</td>
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>王品云</td>
-                      <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>甲苡潔</td>
+                      <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>田苡潔</td>
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>胡家成</td>
                     </tr>
                     <tr>
