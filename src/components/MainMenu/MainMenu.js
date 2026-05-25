@@ -214,124 +214,88 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, i
           
           {activeSection === 'contacts' && (
             <div>
-              {/* <h3 style={{marginBottom: '15px'}}>重要村民通訊錄</h3> */}
-              <div style={{overflowX: 'auto'}}>
-
-                <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '14px'}}>
-                <thead>
-                    <tr style={{backgroundColor: '#f7f7f7'}}>
-                    <th style={{padding: '10px', border: '1px solid #ddd', textAlign: 'center'}}>地區</th>
-                    <th style={{padding: '10px', border: '1px solid #ddd', textAlign: 'left'}}>人物</th>
-                    <th style={{padding: '10px', border: '1px solid #ddd', textAlign: 'left'}}>聯絡資訊</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {/* 加平區域 */}
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd', textAlign: 'center', fontWeight: 'bold'}} rowSpan="6">加平</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>黃國雄前村長</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0928-441-418</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>億凱、憫情、憫萱爸爸</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0900-796-802</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>飛倞、悅慈、芷萍爸爸</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0932-239-370<br/>LINE「飛倞爸爸」</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>江子榮長老</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0937-391-334</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>馬樂可頭目</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0928-788-361</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>田興國長老</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0919-759-013</td>
-                    </tr>
-                    
-                    {/* 加和區域 */}
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd', textAlign: 'center', fontWeight: 'bold'}} rowSpan="5">加和</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>王秋月長老/王媽媽/江聰明太太</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0919-611-510</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>江聰明</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0928-703-984</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>文健站 邱珠妹/邱大姊</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0977-060-617</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>邱晨欣/晨妤/晨蓁家</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 089-810708</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>王國慶村長</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0928-026-575</td>
-                    </tr>
-                    
-                    {/* 加樂區域 */}
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd', textAlign: 'center', fontWeight: 'bold'}} rowSpan="3">加樂</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>江新武長老</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0937-579-080<br/>LINE - 江老師</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>哲遜、哲慶舅舅/鄰長</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>臉書 - 余信安</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>余利亞理事長</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0975-857-901</td>
-                    </tr>
-
-                    {/* 菜販 */}
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd', textAlign: 'center', fontWeight: 'bold'}} rowSpan="1">菜販</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}> </td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>LINE - 林玉蓉財源豐</td>
-                    </tr>
-
-                    {/* 計程車 */}
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd', textAlign: 'center', fontWeight: 'bold'}} rowSpan="3">計程車</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>黃彥彰/兒子</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0910-980-118</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>黃金塗/爸爸</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0933-371-619</td>
-                    </tr>
-                    <tr>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>小鳳姐</td>
-                    <td style={{padding: '10px', border: '1px solid #ddd'}}>電話 0984-099-726</td>
-                    </tr>
-                </tbody>
-                </table>
+              <h2 style={{textAlign: 'center', marginBottom: '28px'}}>重要村民通訊錄</h2>
+              <div>
+                {[
+                  { region: '加平', contacts: [
+                    { name: '黃國雄前村長', info: '電話 0928-441-418' },
+                    { name: '億凱、憫情、憫萱爸爸', info: '電話 0900-796-802' },
+                    { name: '飛倞、悅慈、芷萍爸爸', info: '電話 0932-239-370\nLINE「飛倞爸爸」' },
+                    { name: '江子榮長老', info: '電話 0937-391-334' },
+                    { name: '馬樂可頭目', info: '電話 0928-788-361' },
+                    { name: '田興國長老', info: '電話 0919-759-013' },
+                  ]},
+                  { region: '加和', contacts: [
+                    { name: '王秋月長老／王媽媽', info: '電話 0919-611-510' },
+                    { name: '江聰明', info: '電話 0928-703-984' },
+                    { name: '文健站 邱珠妹／邱大姊', info: '電話 0977-060-617' },
+                    { name: '邱晨欣／晨妤／晨蓁家', info: '電話 089-810708' },
+                    { name: '王國慶村長', info: '電話 0928-026-575' },
+                  ]},
+                  { region: '加樂', contacts: [
+                    { name: '江新武長老', info: '電話 0937-579-080\nLINE 江老師' },
+                    { name: '哲遜、哲慶舅舅／鄰長', info: '臉書 余信安' },
+                    { name: '余利亞理事長', info: '電話 0975-857-901' },
+                  ]},
+                  { region: '菜販', contacts: [
+                    { name: '', info: 'LINE 林玉蓉財源豐' },
+                  ]},
+                  { region: '計程車', contacts: [
+                    { name: '黃彥彰／兒子', info: '電話 0910-980-118' },
+                    { name: '黃金塗／爸爸', info: '電話 0933-371-619' },
+                    { name: '小鳳姐', info: '電話 0984-099-726' },
+                  ]},
+                ].map(({ region, contacts }) => (
+                  <div key={region} style={{ display: 'flex', alignItems: 'flex-start', padding: '14px 0', borderBottom: '1px solid #eee' }}>
+                    <div style={{ minWidth: '48px', fontWeight: 'bold', fontSize: '13px', color: '#888', paddingTop: '3px', flexShrink: 0 }}>{region}</div>
+                    <div style={{ width: '1px', background: '#ddd', alignSelf: 'stretch', margin: '0 16px', flexShrink: 0 }}></div>
+                    <div style={{ flex: 1 }}>
+                      {contacts.map((c, i) => (
+                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '4px 0', fontSize: '14px' }}>
+                          <span style={{ color: '#333' }}>{c.name}</span>
+                          <span style={{ color: '#888', fontSize: '13px', textAlign: 'right', marginLeft: '16px', whiteSpace: 'pre-line', flexShrink: 0 }}>{c.info}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
           
           {activeSection === 'students' && (
             <div>
-              <h2 style={{textAlign: 'center', marginBottom: '20px'}}>學生名單</h2>
-              <div style={{overflowX: 'auto'}}>
-                <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '14px', margin: '0 auto', tableLayout: 'fixed'}}>
-                  <colgroup>
-                    <col style={{width: '16.66%'}} />
-                    <col style={{width: '16.66%'}} />
-                    <col style={{width: '16.66%'}} />
-                    <col style={{width: '16.66%'}} />
-                    <col style={{width: '16.66%'}} />
-                    <col style={{width: '16.66%'}} />
-                  </colgroup>
-                  <tbody>
+              <h2 style={{textAlign: 'center', marginBottom: '28px'}}>學生名單</h2>
+              <div>
+                {[
+                  { year: '114 學年', names: ['潘江琋', '王宥恩', '歐妤婷', '古竣耀', '余忱忻', '邱柔瑄', '田洧萊'] },
+                  { year: '113 學年', names: ['田邵恩', '黃方婷', '江其珊', '余彩恩', '陳恆逸'] },
+                  { year: '112 學年', names: ['江曉瑛', '邱憫瑄', '胡志偉', '林嘉程', '田諾祥'] },
+                  { year: '111 學年', names: ['邱浩軒', '胡王文', '江其峯'] },
+                  { year: '110 學年', names: ['邱憫情', '邱芷苹', '陳于婕'] },
+                  { year: '109 學年', names: ['王涵', '邱晨蓁', '王品云', '田苡潔', '胡家成', '林浩宇', '露德・阿道', '古喬恩'] },
+                  { year: '108 學年', names: ['邱志宏', '林芯蕾', '邱悅慈', '江語婕'] },
+                  { year: '107 學年', names: ['邱晨好', '江天佑', '江炫峯', '張昕冉', '邱瀚祥', '韓唯甯'] },
+                  { year: '106 學年', names: ['黃語恩', '胡薰', '包振毅', '邱志輝', '邱飛倞', '邱億凱', '余宗德', '王廷睿'] },
+                  { year: '105 學年', names: ['包振佑', '黃珮瑄', '邱瀚傑', '胡冠宏', '邱晨欣', '黃詩恩', '奧思汀・阿道', '江愉柔', '胡育秀'] },
+                  { year: '104 學年', names: ['王榮恩', '余斯帖', '胡以辰', '王冠宇'] },
+                  { year: '103 學年', names: ['余哲慶', '胡翰翔', '王義群', '余佳銘', '蘿莎・阿道'] },
+                  { year: '102 學年', names: ['張俊凱', '余哲遜', '邱欣宜', '邱恩賜', '江添敏', '胡軍', '胡惟伶', '韓唯希'] },
+                  { year: '101 學年', names: ['胡雨潔', '胡奕萱', '胡家源', '胡紘維', '邱慈軒', '黃皓均', '江采融', '黃金昀'] },
+                  { year: '100 學年', names: ['邱宗平', '王威翔', '王芯卉', '邱嘉柔', '江晏均'] },
+                ].map(({ year, names }) => (
+                  <div key={year} style={{ display: 'flex', alignItems: 'flex-start', padding: '14px 0', borderBottom: '1px solid #eee' }}>
+                    <div style={{ minWidth: '72px', fontWeight: 'bold', fontSize: '13px', color: '#888', paddingTop: '2px', flexShrink: 0 }}>{year}</div>
+                    <div style={{ width: '1px', background: '#ddd', alignSelf: 'stretch', margin: '0 16px', flexShrink: 0 }}></div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px' }}>
+                      {names.map(name => (
+                        <span key={name} style={{ fontSize: '14px', color: '#333' }}>{name}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{display: 'none'}}><table><tbody>
                     <tr>
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center', fontWeight: 'bold'}}>114 學年</td>
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>潘江琋</td>
@@ -508,9 +472,7 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, i
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>邱嘉柔</td>
                       <td style={{padding: '10px', border: '1px solid #000', textAlign: 'center'}}>江晏均</td>
                     </tr>
-                  </tbody>
-                </table>
-              </div>
+                  </tbody></table></div>
             </div>
           )}
           

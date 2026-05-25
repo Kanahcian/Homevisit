@@ -1,48 +1,57 @@
-Homevisit/
-├── public/                       # 靜態資源目錄
-│   ├── assets/                   # 資源文件
-│   │   ├── images/               # 圖片資源
-│   │   │   ├── logo.png          # 網站 logo
-│   │   │   ├── pin.png           # 地圖標記圖標
-│   │   │   └── layers.png        # 地圖圖層按鈕圖標
-│   │   └── ...                   # 其他資源
-│   ├── index.html                # HTML 主文件
-│   └── manifest.json             # PWA 配置文件
-│
-├── src/                          # 源代碼目錄
-│   ├── components/               # React 組件
-│   │   ├── Map/                  # 地圖組件
-│   │   │   ├── Map.js            # 地圖功能實現
-│   │   │   └── Map.css           # 地圖樣式
-│   │   ├── Search/               # 搜索組件
-│   │   │   ├── Search.js         # 搜索功能實現
-│   │   │   └── Search.css        # 搜索樣式
-│   │   ├── LocationInfo/         # 地點信息組件
-│   │   │   ├── LocationInfo.js   # 地點基本信息
-│   │   │   └── LocationInfo.css  # 地點樣式
-│   │   ├── RecordDetails/        # 記錄詳情組件
-│   │   │   ├── RecordDetails.js  # 家訪記錄詳情
-│   │   │   └── RecordDetails.css # 記錄樣式
-│   │   ├── SidePanel/            # 側邊欄組件 (桌面版)
-│   │   │   ├── SidePanel.js      # 側邊欄功能
-│   │   │   └── SidePanel.css     # 側邊欄樣式
-│   │   ├── BottomCard/           # 底部卡片組件 (手機版)
-│   │   │   ├── BottomCard.js     # 底部卡片功能
-│   │   │   └── BottomCard.css    # 底部卡片樣式
-│   │   └── VillagerModal/        # 村民彈窗組件
-│   │       ├── VillagerModal.js  # 村民彈窗功能
-│   │       └── VillagerModal.css # 村民彈窗樣式
-│   │
-│   ├── services/                 # 服務層
-│   │   └── api.js                # API 請求封裝
-│   │
-│   ├── utils/                    # 工具函數
-│   │   └── helpers.js            # 通用工具函數
-│   │
-│   ├── App.js                    # 主應用組件
-│   ├── App.css                   # 主應用樣式
-│   ├── index.js                  # 應用入口文件
-│   └── index.css                 # 全局樣式
-│
-├── package.json                  # 項目依賴配置
-└── README.md                     # 項目說明文檔
+# 加拿家訪資料庫
+
+加拿部落家訪紀錄與村民資訊的互動地圖應用，部署於 GitHub Pages。
+
+**線上網址：** https://kanahcian.github.io/Homevisit/
+
+---
+
+## 專案簡介
+
+以互動地圖為核心，整合加平、加和、加樂三個社區的村民資料、家訪紀錄、學生名單與重要聯絡資訊，供服務隊成員在家訪前後查閱使用。
+
+## 技術架構
+
+| 層級 | 技術 |
+|------|------|
+| 前端 | React 18、Leaflet（地圖）|
+| 後端 API | Node.js，部署於 Render |
+| 部署 | GitHub Pages（`gh-pages` branch）|
+
+## 本地開發
+
+> **注意：** 需使用 Node 18，Node 20+ 與 `react-scripts` 有相容性問題。
+> 可使用 nvm 切換版本：`nvm use 18`
+
+```bash
+# 安裝依賴
+npm install
+
+# 啟動開發伺服器
+npm start
+```
+
+## 部署
+
+```bash
+npm run deploy
+```
+
+此指令會自動 build 並推送至 `gh-pages` branch，約 1-2 分鐘後線上更新。
+
+## 專案結構
+
+```
+src/
+├── components/
+│   ├── Map/            # 互動地圖主體
+│   ├── SidePanel/      # 桌面版側邊欄
+│   ├── BottomCard/     # 手機版底部卡片
+│   ├── LocationInfo/   # 地點與家庭資訊
+│   ├── RecordDetails/  # 家訪紀錄詳情
+│   ├── VillagerModal/  # 村民資訊彈窗
+│   ├── MainMenu/       # 選單（名單、通訊錄、大哉問）
+│   └── Search/         # 搜尋功能
+└── services/
+    └── api.js          # 後端 API 串接
+```
