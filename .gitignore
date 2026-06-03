@@ -1,3 +1,19 @@
+# dependencies
 node_modules/
+
+# production build
+build/
+dist/
+
+# macOS
+.DS_Store
+
+# environment
 .env
-playground
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# logs
+npm-debug.log*

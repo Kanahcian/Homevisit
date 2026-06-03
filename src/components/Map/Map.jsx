@@ -8,19 +8,19 @@ import TagFilter from './TagFilter'; // 新增：導入標籤篩選器
 // 📍 ICON 配置區域 - 在這裡設定所有 icon 路徑
 // ===========================================
 const MARKER_ICONS = {
-  default: `${process.env.PUBLIC_URL}/assets/images/pin.png`,        // 預設標記
-  church: `${process.env.PUBLIC_URL}/assets/images/church.png`,      // 教會標記
-  festival: `${process.env.PUBLIC_URL}/assets/images/home.png`,      // 射耳祭住宿標記
+  default: `${import.meta.env.BASE_URL}assets/images/pin.png`,        // 預設標記
+  church: `${import.meta.env.BASE_URL}assets/images/church.png`,      // 教會標記
+  festival: `${import.meta.env.BASE_URL}assets/images/home.png`,      // 射耳祭住宿標記
   
   // 村晚系列 - 各自獨立的 icon
-  village_karaoke: `${process.env.PUBLIC_URL}/assets/images/karaoke.png`,  // 村晚卡拉ok機
-  village_firewood: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,     // 村晚木柴
-  village_grill: `${process.env.PUBLIC_URL}/assets/images/barbeque.png`,      // 村晚烤爐
-  village_evening: `${process.env.PUBLIC_URL}/assets/images/firewood.png`,      // 其他村晚系列
+  village_karaoke: `${import.meta.env.BASE_URL}assets/images/karaoke.png`,  // 村晚卡拉ok機
+  village_firewood: `${import.meta.env.BASE_URL}assets/images/firewood.png`,     // 村晚木柴
+  village_grill: `${import.meta.env.BASE_URL}assets/images/barbeque.png`,      // 村晚烤爐
+  village_evening: `${import.meta.env.BASE_URL}assets/images/firewood.png`,      // 其他村晚系列
   
-  clan: `${process.env.PUBLIC_URL}/assets/images/family.png`,        // 江氏宗親會標記
-  farm: `${process.env.PUBLIC_URL}/assets/images/sprout.png`,        // 農訪標記
-  defense: `${process.env.PUBLIC_URL}/assets/images/shield.png`      // 防身術標記
+  clan: `${import.meta.env.BASE_URL}assets/images/family.png`,        // 江氏宗親會標記
+  farm: `${import.meta.env.BASE_URL}assets/images/sprout.png`,        // 農訪標記
+  defense: `${import.meta.env.BASE_URL}assets/images/shield.png`      // 防身術標記
 };
 
 // ===========================================
@@ -424,7 +424,7 @@ const Map = ({
           onClick={handleLayerSwitch}
           title="切換地圖圖層"
         >
-          <img src={`${process.env.PUBLIC_URL}/assets/images/layers.png`} className="map-switch-icon" alt="切換圖層" />
+          <img src={`${import.meta.env.BASE_URL}assets/images/layers.png`} className="map-switch-icon" alt="切換圖層" />
         </button>
 
         {/* 定位按鈕 */}

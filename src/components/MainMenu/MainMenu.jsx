@@ -180,7 +180,7 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, i
                 </div>
                 <div style={{display: 'flex', justifyContent: 'center', margin: '30px 0'}}>
                 <img 
-                    src={`${process.env.PUBLIC_URL}/assets/images/logo.png`} 
+                    src={`${import.meta.env.BASE_URL}assets/images/logo.png`} 
                     alt="獻給" 
                     style={{width: '30%', maxWidth: '300px', display: 'block'}} 
                 />
@@ -268,24 +268,27 @@ const MainMenu = ({ onSectionSelect, onBackToMap, activeSection, isFullScreen, i
               <h2 style={{textAlign: 'center', marginBottom: '28px'}}>學生名單</h2>
               <div>
                 {[
-                  { year: '114 學年', names: ['潘江琋', '王宥恩', '歐妤婷', '古竣耀', '余忱忻', '邱柔瑄', '田洧萊'] },
-                  { year: '113 學年', names: ['田邵恩', '黃方婷', '江其珊', '余彩恩', '陳恆逸'] },
-                  { year: '112 學年', names: ['江曉瑛', '邱憫瑄', '胡志偉', '林嘉程', '田諾祥'] },
-                  { year: '111 學年', names: ['邱浩軒', '胡王文', '江其峯'] },
-                  { year: '110 學年', names: ['邱憫情', '邱芷苹', '陳于婕'] },
-                  { year: '109 學年', names: ['王涵', '邱晨蓁', '王品云', '田苡潔', '胡家成', '林浩宇', '露德・阿道', '古喬恩'] },
-                  { year: '108 學年', names: ['邱志宏', '林芯蕾', '邱悅慈', '江語婕'] },
-                  { year: '107 學年', names: ['邱晨好', '江天佑', '江炫峯', '張昕冉', '邱瀚祥', '韓唯甯'] },
-                  { year: '106 學年', names: ['黃語恩', '胡薰', '包振毅', '邱志輝', '邱飛倞', '邱億凱', '余宗德', '王廷睿'] },
-                  { year: '105 學年', names: ['包振佑', '黃珮瑄', '邱瀚傑', '胡冠宏', '邱晨欣', '黃詩恩', '奧思汀・阿道', '江愉柔', '胡育秀'] },
-                  { year: '104 學年', names: ['王榮恩', '余斯帖', '胡以辰', '王冠宇'] },
-                  { year: '103 學年', names: ['余哲慶', '胡翰翔', '王義群', '余佳銘', '蘿莎・阿道'] },
-                  { year: '102 學年', names: ['張俊凱', '余哲遜', '邱欣宜', '邱恩賜', '江添敏', '胡軍', '胡惟伶', '韓唯希'] },
-                  { year: '101 學年', names: ['胡雨潔', '胡奕萱', '胡家源', '胡紘維', '邱慈軒', '黃皓均', '江采融', '黃金昀'] },
-                  { year: '100 學年', names: ['邱宗平', '王威翔', '王芯卉', '邱嘉柔', '江晏均'] },
-                ].map(({ year, names }) => (
+                  { year: '114 學年', grade: '小一', names: ['潘江琋', '王宥恩', '歐妤婷', '古竣耀', '余忱忻', '邱柔瑄', '田洧萊'] },
+                  { year: '113 學年', grade: '小二', names: ['田邵恩', '黃方婷', '江其珊', '余彩恩', '陳恆逸'] },
+                  { year: '112 學年', grade: '小三', names: ['江曉瑛', '邱憫瑄', '胡志偉', '林嘉程', '田諾祥'] },
+                  { year: '111 學年', grade: '小四', names: ['邱浩軒', '胡王文', '江其峯'] },
+                  { year: '110 學年', grade: '小五', names: ['邱憫情', '邱芷苹', '陳于婕'] },
+                  { year: '109 學年', grade: '小六', names: ['王涵', '邱晨蓁', '王品云', '田苡潔', '胡家成', '林浩宇', '露德・阿道', '古喬恩'] },
+                  { year: '108 學年', grade: '國一', names: ['邱志宏', '林芯蕾', '邱悅慈', '江語婕'] },
+                  { year: '107 學年', grade: '國二', names: ['邱晨好', '江天佑', '江炫峯', '張昕冉', '邱瀚祥', '韓唯甯'] },
+                  { year: '106 學年', grade: '國三', names: ['黃語恩', '胡薰', '包振毅', '邱志輝', '邱飛倞', '邱億凱', '余宗德', '王廷睿'] },
+                  { year: '105 學年', grade: '高一', names: ['包振佑', '黃珮瑄', '邱瀚傑', '胡冠宏', '邱晨欣', '黃詩恩', '奧思汀・阿道', '江愉柔', '胡育秀'] },
+                  { year: '104 學年', grade: '高二', names: ['王榮恩', '余斯帖', '胡以辰', '王冠宇'] },
+                  { year: '103 學年', grade: '高三', names: ['余哲慶', '胡翰翔', '王義群', '余佳銘', '蘿莎・阿道'] },
+                  { year: '102 學年', grade: '大一', names: ['張俊凱', '余哲遜', '邱欣宜', '邱恩賜', '江添敏', '胡軍', '胡惟伶', '韓唯希'] },
+                  { year: '101 學年', grade: '大二', names: ['胡雨潔', '胡奕萱', '胡家源', '胡紘維', '邱慈軒', '黃皓均', '江采融', '黃金昀'] },
+                  { year: '100 學年', grade: '大三', names: ['邱宗平', '王威翔', '王芯卉', '邱嘉柔', '江晏均'] },
+                ].map(({ year, grade, names }) => (
                   <div key={year} style={{ display: 'flex', alignItems: 'flex-start', padding: '14px 0', borderBottom: '1px solid #eee' }}>
-                    <div style={{ minWidth: '72px', fontWeight: 'bold', fontSize: '13px', color: '#888', paddingTop: '2px', flexShrink: 0 }}>{year}</div>
+                    <div style={{ minWidth: '80px', flexShrink: 0 }}>
+                      <div style={{ fontWeight: 'bold', fontSize: '13px', color: '#888' }}>{year}</div>
+                      <div style={{ fontSize: '12px', color: '#bbb', marginTop: '3px' }}>{grade}</div>
+                    </div>
                     <div style={{ width: '1px', background: '#ddd', alignSelf: 'stretch', margin: '0 16px', flexShrink: 0 }}></div>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 16px' }}>
                       {names.map(name => (

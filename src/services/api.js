@@ -1,7 +1,7 @@
 // API服務 - 處理與後端的所有通信
 // 可以在開發和生產環境中切換API基本URL
 
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 // 模擬村民資料 - 當 API 無法訪問時使用
 const MOCK_VILLAGERS = {
