@@ -25,26 +25,17 @@ const ParticipantTags = ({ participants, type, onVillagerClick }) => {
   return (
     <>
       {participants.map((person, index) => {
-        // 處理不同形式的資料結構
+        // 後端回傳物件（村民帶真實 ID）或純名稱字串（學生）
         const name = typeof person === 'object' ? person.name : person;
-        
-        // 根據名稱分配已知的 ID
-        let id;
-        if (name === "江新武長老") {
-          id = 1;
-        } else if (name === "Cina Valis") {
-          id = 2;
-        } else {
-          id = index + 1; // 預設 ID
-        }
-        
+        const id = typeof person === 'object' ? person.id : undefined;
+
         return (
           <span 
             key={`${type}-${id}-${index}`}
             className={`participant-tag ${type}`}
             data-id={id}
-            title={type === 'villager' ? "點擊查看詳細資訊" : ""}
-            onClick={type === 'villager' ? () => onVillagerClick(name, id) : undefined}
+            title={type === 'villager' && id ? "點擊查看詳細資訊" : ""}
+            onClick={type === 'villager' && id ? () => onVillagerClick(name, id) : undefined}
           >
             {name}
           </span>
