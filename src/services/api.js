@@ -194,8 +194,6 @@ export const fetchRecords = async (locationId) => {
           date: formatDate(record.date), // 格式化日期供顯示使用
           description: record.description || "無訪視筆記",
           photo: convertGoogleDriveLink(record.photo),
-          account: record.account,
-          account_id: record.account_id || record.account, // 保留 account_id
           students: record.students || [],
           villagers: villagerDetails || [],
         };

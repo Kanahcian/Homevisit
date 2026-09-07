@@ -14,8 +14,7 @@ const RecordFormModal = ({
     date: '',
     photo: '',
     description: '',
-    location_id: locationId || '',
-    account_id: 1 // 默認值，可以根據需要修改
+    location_id: locationId || ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,8 +47,7 @@ const RecordFormModal = ({
         photo: record.photo || '',
         // 如果 description 是 "無訪視筆記"，當作空字串處理
         description: (record.description && record.description !== '無訪視筆記') ? record.description : '',
-        location_id: locationId || '',
-        account_id: record.account_id || 1
+        location_id: locationId || ''
       };
 
       setFormData(initialData);
@@ -158,9 +156,8 @@ const RecordFormModal = ({
           dataToSubmit.description = formData.description.trim();
         }
 
-        // location_id 和 account_id 對新建是必須的
+        // location_id 對新建是必須的
         dataToSubmit.location_id = parseInt(formData.location_id);
-        dataToSubmit.account_id = parseInt(formData.account_id);
       }
 
       console.log('提交的數據:', JSON.stringify(dataToSubmit, null, 2));
