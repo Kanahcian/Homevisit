@@ -17,3 +17,6 @@ dist/
 
 # logs
 npm-debug.log*
+
+# others
+/.impeccable
